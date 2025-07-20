@@ -125,3 +125,361 @@
 {"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-18T15:47:50.930Z"}
 {"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-18T15:47:50.930Z"}
 {"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-18T15:47:50.930Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:11:26.533Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:11:26.534Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:11:27.937Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:11:27.937Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:11:27.939Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:11:27.939Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:11:27.940Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:13:01.572Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:13:01.575Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:13:02.899Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:13:02.901Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:13:02.903Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:13:02.903Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:13:02.904Z"}
+{"amountIn":"1","level":"info","message":"Received order submission","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:16:56.006Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Order submitted","orderId":"ord_1752967016016_k5uddtmbv","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"1","timestamp":"2025-07-19T23:16:56.019Z"}
+{"level":"info","message":"Executing order","orderId":"ord_1752967016016_k5uddtmbv","sequence":"1","timestamp":"2025-07-19T23:16:56.128Z"}
+{"error":"Signature verification failed.\nMissing signature for public key [`CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa`].","level":"error","message":"Order execution failed","orderId":"ord_1752967016016_k5uddtmbv","timestamp":"2025-07-19T23:16:57.448Z"}
+{"amountIn":"1","level":"info","message":"Received order submission","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:18:24.062Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Order submitted","orderId":"ord_1752967104062_ndy0416j0","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"2","timestamp":"2025-07-19T23:18:24.063Z"}
+{"level":"info","message":"Executing order","orderId":"ord_1752967104062_ndy0416j0","sequence":"2","timestamp":"2025-07-19T23:18:24.539Z"}
+{"error":"Signature verification failed.\nMissing signature for public key [`CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa`].","level":"error","message":"Order execution failed","orderId":"ord_1752967104062_ndy0416j0","timestamp":"2025-07-19T23:18:25.820Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:20:53.539Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:20:53.904Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:20:53.905Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:20:55.300Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:20:55.301Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:20:55.303Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:20:55.304Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:20:55.304Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:21:01.278Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:21:01.525Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:21:01.527Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:21:02.796Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:21:02.797Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:21:02.799Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:21:02.799Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:21:02.799Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:21:09.780Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:21:09.969Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:21:09.971Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:21:11.254Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:21:11.255Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:21:11.257Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:21:11.257Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:21:11.257Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:21:16.101Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:21:16.300Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:21:16.301Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:21:17.578Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:21:17.579Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:21:17.582Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:21:17.582Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:21:17.583Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:21:24.234Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:21:24.426Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:21:24.427Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:21:25.674Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:21:25.675Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:21:25.676Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:21:25.677Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:21:25.677Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:21:41.280Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:21:41.462Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:21:41.463Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:21:42.923Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:21:42.924Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:21:42.926Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:21:42.926Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:21:42.927Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:22:16.583Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:22:17.850Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:22:17.851Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:22:19.091Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:22:19.092Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:22:19.094Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:22:19.094Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:22:19.094Z"}
+{"amountIn":"1","level":"info","message":"Received order submission","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:22:34.266Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Order submitted","orderId":"ord_1752967354267_74cnyab4v","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"1","timestamp":"2025-07-19T23:22:34.269Z"}
+{"amountIn":"1","level":"info","message":"Executing order","orderId":"ord_1752967354267_74cnyab4v","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"1","timestamp":"2025-07-19T23:22:35.109Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"amountIn":"1","error":"Signature verification failed.\nMissing signature for public key [`CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa`].","executionTime":1326,"level":"error","message":"Order execution failed","orderId":"ord_1752967354267_74cnyab4v","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"1","stack":"Error: Signature verification failed.\nMissing signature for public key [`CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa`].\n    at Transaction.serialize (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/node_modules/@solana/web3.js/src/transaction/legacy.ts:828:15)\n    at Connection.serialize [as sendTransaction] (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/node_modules/@solana/web3.js/src/connection.ts:5990:41)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at RelayerService.executeOrder (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/src/relayerService.ts:327:25)\n    at RelayerService.executionLoop (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/src/relayerService.ts:205:9)","timestamp":"2025-07-19T23:22:36.435Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:24:13.095Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:24:13.365Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:24:13.366Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:24:14.781Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:24:14.782Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:24:14.784Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:24:14.784Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:24:14.785Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:24:19.665Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:24:19.969Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:24:19.970Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:24:21.255Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:24:21.256Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:24:21.258Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:24:21.259Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:24:21.259Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:24:39.194Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:24:39.459Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:24:39.460Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:24:40.724Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:24:40.725Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:24:40.727Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:24:40.727Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:24:40.728Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:24:49.160Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:24:49.330Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:24:49.332Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:24:50.624Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:24:50.625Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:24:50.627Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:24:50.627Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:24:50.628Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:25:07.754Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:25:07.924Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:25:07.925Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:25:09.340Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:25:09.341Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:25:09.343Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:25:09.344Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:25:09.344Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:25:41.672Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:25:42.920Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:25:42.922Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:25:44.161Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:25:44.162Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:25:44.164Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:25:44.164Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:25:44.165Z"}
+{"amountIn":"1","level":"info","message":"Received order submission","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:26:00.004Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Order submitted","orderId":"ord_1752967560005_15nahz1nq","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"1","timestamp":"2025-07-19T23:26:00.007Z"}
+{"amountIn":"1","level":"info","message":"Executing order","orderId":"ord_1752967560005_15nahz1nq","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"1","timestamp":"2025-07-19T23:26:00.176Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"amountIn":"1","error":"Simulation failed. \nMessage: Transaction simulation failed: Error processing Instruction 2: custom program error: 0x9c9. \nLogs: \n[\n  \"Program log: Immediate swap 47 on pool 9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT\",\n  \"Program GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp invoke [2]\",\n  \"Program log: Instruction: SwapBaseInput\",\n  \"Program log: AnchorError thrown in programs/cp-swap/src/instructions/swap_base_input.rs:188. Error Code: RequireGtViolated. Error Number: 2505. Error Message: A require_gt expression was violated.\",\n  \"Program log: Left: 0\",\n  \"Program log: Right: 0\",\n  \"Program GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp consumed 21381 of 186016 compute units\",\n  \"Program GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp failed: custom program error: 0x9c9\",\n  \"Program EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq consumed 35065 of 199700 compute units\",\n  \"Program EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq failed: custom program error: 0x9c9\"\n]. \nCatch the `SendTransactionError` and call `getLogs()` on it for full details.","executionTime":1312,"level":"error","message":"Order execution failed","orderId":"ord_1752967560005_15nahz1nq","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"1","stack":"Error: Simulation failed. \nMessage: Transaction simulation failed: Error processing Instruction 2: custom program error: 0x9c9. \nLogs: \n[\n  \"Program log: Immediate swap 47 on pool 9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT\",\n  \"Program GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp invoke [2]\",\n  \"Program log: Instruction: SwapBaseInput\",\n  \"Program log: AnchorError thrown in programs/cp-swap/src/instructions/swap_base_input.rs:188. Error Code: RequireGtViolated. Error Number: 2505. Error Message: A require_gt expression was violated.\",\n  \"Program log: Left: 0\",\n  \"Program log: Right: 0\",\n  \"Program GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp consumed 21381 of 186016 compute units\",\n  \"Program GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp failed: custom program error: 0x9c9\",\n  \"Program EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq consumed 35065 of 199700 compute units\",\n  \"Program EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq failed: custom program error: 0x9c9\"\n]. \nCatch the `SendTransactionError` and call `getLogs()` on it for full details.\n    at Connection.sendEncodedTransaction (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/node_modules/@solana/web3.js/src/connection.ts:6047:13)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at Connection.sendRawTransaction (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/node_modules/@solana/web3.js/src/connection.ts:6003:20)\n    at Connection.sendTransaction (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/node_modules/@solana/web3.js/src/connection.ts:5952:14)\n    at RelayerService.executeOrder (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/src/relayerService.ts:305:21)\n    at RelayerService.executionLoop (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/src/relayerService.ts:209:9)","timestamp":"2025-07-19T23:26:01.487Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"amountIn":"1","level":"info","message":"Received order submission","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:27:26.563Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Order submitted","orderId":"ord_1752967646564_cmgd865n1","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"2","timestamp":"2025-07-19T23:27:26.564Z"}
+{"amountIn":"1","level":"info","message":"Executing order","orderId":"ord_1752967646564_cmgd865n1","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"2","timestamp":"2025-07-19T23:27:26.580Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"amountIn":"1","error":"Simulation failed. \nMessage: Transaction simulation failed: This transaction has already been processed. \nLogs: \n[]. \nCatch the `SendTransactionError` and call `getLogs()` on it for full details.","executionTime":1267,"level":"error","message":"Order execution failed","orderId":"ord_1752967646564_cmgd865n1","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"2","stack":"Error: Simulation failed. \nMessage: Transaction simulation failed: This transaction has already been processed. \nLogs: \n[]. \nCatch the `SendTransactionError` and call `getLogs()` on it for full details.\n    at Connection.sendEncodedTransaction (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/node_modules/@solana/web3.js/src/connection.ts:6047:13)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at Connection.sendRawTransaction (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/node_modules/@solana/web3.js/src/connection.ts:6003:20)\n    at Connection.sendTransaction (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/node_modules/@solana/web3.js/src/connection.ts:5952:14)\n    at RelayerService.executeOrder (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/src/relayerService.ts:305:21)\n    at RelayerService.executionLoop (/Users/zeroo111/Developer/fairswap/ctm_wrapper_fs/relayer/src/relayerService.ts:209:9)","timestamp":"2025-07-19T23:27:27.848Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:29:21.460Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:29:21.726Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:29:21.727Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:29:23.081Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:29:23.082Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:29:23.084Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:29:23.084Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:29:23.085Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:29:31.015Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:29:31.280Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:29:31.281Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:29:32.570Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:29:32.571Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:29:32.573Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:29:32.574Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:29:32.574Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:32:17.374Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:32:18.693Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:32:18.695Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:32:20.152Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:32:20.153Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:32:20.155Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:32:20.155Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:32:20.156Z"}
+{"amountIn":"1","level":"info","message":"Received order submission","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:32:34.679Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Order submitted","orderId":"ord_1752967954680_7g0hgozna","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"1","timestamp":"2025-07-19T23:32:34.683Z"}
+{"amountIn":"1","level":"info","message":"Executing order","orderId":"ord_1752967954680_7g0hgozna","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","sequence":"1","timestamp":"2025-07-19T23:32:35.171Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"amountIn":"1","executionTime":1283,"level":"warn","message":"Transaction already processed - likely frontend auto-broadcast","orderId":"ord_1752967954680_7g0hgozna","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","possibleDuplicateReason":"Frontend wallet may have auto-broadcast the signed transaction","recommendation":"Frontend should send unsigned transaction to relayer","sequence":"1","timestamp":"2025-07-19T23:32:36.453Z","transactionSignature":"omrTLtiUkMu1vcS9kZkkoHh3Nj0EL0kbs8PkjrXF3lwa6aQ7be0YYrO8c1b+FZaQAfw+GaEezEyNyCxEkI4LAw==","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:40:02.094Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:40:02.366Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:40:02.367Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:40:03.760Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:40:03.761Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:40:03.763Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:40:03.764Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:40:03.764Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:40:33.917Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:40:34.265Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:40:34.267Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:40:35.568Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:40:35.569Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:40:35.572Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:40:35.573Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:40:35.574Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:40:41.134Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:40:41.328Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:40:41.329Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:40:42.570Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:40:42.571Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:40:42.573Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:40:42.574Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:40:42.574Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:41:04.001Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:41:04.294Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:41:04.295Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:41:05.595Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:41:05.596Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:41:05.598Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:41:05.599Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:41:05.599Z"}
+{"amountIn":"1000000000","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"1536000000","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:45:52.281Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"amountIn":"1000000000","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"1536000000","orderId":"ord_1752968752282_hz9svag3e","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:45:52.283Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752968752282_hz9svag3e","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"1","timestamp":"2025-07-19T23:45:52.621Z","transactionSize":936}
+{"amountIn":"1000000000","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"1536000000","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:48:08.375Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"amountIn":"1000000000","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"1536000000","orderId":"ord_1752968888376_m27k4hsy3","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:48:08.376Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752968888376_m27k4hsy3","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"2","timestamp":"2025-07-19T23:48:08.692Z","transactionSize":936}
+{"amountIn":"1","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"1536","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:49:08.554Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"amountIn":"1","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"1536","orderId":"ord_1752968948555_9sm55obrw","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-19T23:49:08.555Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752968948555_9sm55obrw","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"3","timestamp":"2025-07-19T23:49:08.889Z","transactionSize":936}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:57:28.544Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:57:28.827Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:57:28.828Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:57:30.252Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:57:30.254Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:57:30.256Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:57:30.256Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:57:30.257Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:57:34.603Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:57:34.862Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:57:34.863Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:57:36.107Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:57:36.109Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:57:36.111Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:57:36.111Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:57:36.112Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:57:42.881Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:57:43.070Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:57:43.072Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:57:44.325Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:57:44.326Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:57:44.328Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:57:44.328Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:57:44.328Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:57:50.414Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:57:58.788Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:57:58.789Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:58:00.056Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:58:00.057Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:58:00.059Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:58:00.059Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:58:00.060Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:58:06.570Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:58:06.744Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:58:06.745Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:58:08.044Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:58:08.045Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:58:08.047Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:58:08.048Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:58:08.048Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:59:52.236Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:59:52.533Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:59:52.536Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:59:53.916Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:59:53.917Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:59:53.919Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:59:53.920Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:59:53.920Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-19T23:59:58.067Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-19T23:59:58.261Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-19T23:59:58.263Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-19T23:59:59.551Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-19T23:59:59.552Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-19T23:59:59.555Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-19T23:59:59.555Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-19T23:59:59.556Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-20T00:00:05.690Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-20T00:00:05.872Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-20T00:00:05.873Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-20T00:00:07.177Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-20T00:00:07.177Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-20T00:00:07.179Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-20T00:00:07.180Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-20T00:00:07.180Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-20T00:00:15.834Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-20T00:00:16.017Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-20T00:00:16.018Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-20T00:00:17.326Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-20T00:00:17.327Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-20T00:00:17.329Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-20T00:00:17.329Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-20T00:00:17.330Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-20T00:00:20.458Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-20T00:00:21.928Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-20T00:00:21.929Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-20T00:00:23.229Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-20T00:00:23.230Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-20T00:00:23.232Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-20T00:00:23.233Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-20T00:00:23.234Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-20T00:00:24.540Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-20T00:00:58.538Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-20T00:00:58.539Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-20T00:00:59.915Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-20T00:00:59.917Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-20T00:00:59.918Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-20T00:00:59.919Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-20T00:00:59.919Z"}
+{"amountIn":"1","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"1536","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:01:06.884Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"amountIn":"1","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"1536","orderId":"ord_1752969666885_b066xxs32","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:01:06.885Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"isBaseInput":false,"level":"info","message":"Using provided token accounts","swapDirection":"WSOL -> USDC","timestamp":"2025-07-20T00:01:06.889Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:01:06.891Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752969666885_b066xxs32","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"1","timestamp":"2025-07-20T00:01:07.229Z","transactionSize":936}
+{"amountIn":"1000000000","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"1536000000","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:04:50.075Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"amountIn":"1000000000","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"1536000000","orderId":"ord_1752969890076_z0ynsvv5a","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:04:50.076Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"isBaseInput":false,"level":"info","message":"Using provided token accounts","swapDirection":"WSOL -> USDC","timestamp":"2025-07-20T00:04:50.081Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:04:50.082Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752969890076_z0ynsvv5a","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"2","timestamp":"2025-07-20T00:04:50.410Z","transactionSize":936}
+{"amountIn":"100","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"153699","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:05:24.677Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"amountIn":"100","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"153699","orderId":"ord_1752969924677_5l5zyplqt","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:05:24.677Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"isBaseInput":false,"level":"info","message":"Using provided token accounts","swapDirection":"WSOL -> USDC","timestamp":"2025-07-20T00:05:24.681Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:05:24.682Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752969924677_5l5zyplqt","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"3","timestamp":"2025-07-20T00:05:25.001Z","transactionSize":936}
+{"amountIn":"1000","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"1536995","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:05:48.024Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"amountIn":"1000","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"1536995","orderId":"ord_1752969948025_1eskeujki","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:05:48.025Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"isBaseInput":false,"level":"info","message":"Using provided token accounts","swapDirection":"WSOL -> USDC","timestamp":"2025-07-20T00:05:48.027Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:05:48.027Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752969948025_1eskeujki","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"4","timestamp":"2025-07-20T00:05:48.346Z","transactionSize":936}
+{"amountIn":"1000000","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"1536999402","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:06:19.986Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"amountIn":"1000000","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"1536999402","orderId":"ord_1752969979987_u80we5v3y","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:06:19.987Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"isBaseInput":false,"level":"info","message":"Using provided token accounts","swapDirection":"WSOL -> USDC","timestamp":"2025-07-20T00:06:19.989Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:06:19.990Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752969979987_u80we5v3y","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"5","timestamp":"2025-07-20T00:06:20.299Z","transactionSize":936}
+{"amountIn":"1000000","isBaseInput":true,"level":"info","message":"Received order creation request","minAmountOut":"636","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:07:39.853Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"amountIn":"1000000","isBaseInput":true,"level":"info","message":"Building transaction for order","minAmountOut":"636","orderId":"ord_1752970059853_pj1j9txax","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:07:39.853Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"isBaseInput":true,"level":"info","message":"Using provided token accounts","swapDirection":"USDC -> WSOL","timestamp":"2025-07-20T00:07:39.855Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userSourceToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:07:39.855Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userSourceToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752970059853_pj1j9txax","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"6","timestamp":"2025-07-20T00:07:40.165Z","transactionSize":936}
+{"amountIn":"1000000","isBaseInput":true,"level":"info","message":"Received order creation request","minAmountOut":"636","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:08:13.546Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenB":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy"}
+{"amountIn":"1000000","isBaseInput":true,"level":"info","message":"Building transaction for order","minAmountOut":"636","orderId":"ord_1752970093546_bzlepsl4j","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:08:13.546Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenB":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy"}
+{"isBaseInput":true,"level":"info","message":"Using provided token accounts","swapDirection":"USDC -> WSOL","timestamp":"2025-07-20T00:08:13.548Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenB":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:08:13.548Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752970093546_bzlepsl4j","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"7","timestamp":"2025-07-20T00:08:13.861Z","transactionSize":936}
+{"amountIn":"1000000000","isBaseInput":true,"level":"info","message":"Received order creation request","minAmountOut":"634590","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:08:46.275Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenB":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy"}
+{"amountIn":"1000000000","isBaseInput":true,"level":"info","message":"Building transaction for order","minAmountOut":"634590","orderId":"ord_1752970126275_8nrjhlfg1","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:08:46.275Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenB":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy"}
+{"isBaseInput":true,"level":"info","message":"Using provided token accounts","swapDirection":"USDC -> WSOL","timestamp":"2025-07-20T00:08:46.278Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenB":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:08:46.278Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752970126275_8nrjhlfg1","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"8","timestamp":"2025-07-20T00:08:46.597Z","transactionSize":936}
+{"amountIn":"1000000000","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"1543307942880","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:09:35.816Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"amountIn":"1000000000","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"1543307942880","orderId":"ord_1752970175816_tt2lvx40d","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:09:35.816Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"isBaseInput":false,"level":"info","message":"Using provided token accounts","swapDirection":"WSOL -> USDC","timestamp":"2025-07-20T00:09:35.818Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:09:35.818Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752970175816_tt2lvx40d","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"9","timestamp":"2025-07-20T00:09:36.123Z","transactionSize":936}
+{"amountIn":"100000","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"154330794","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:09:53.538Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"amountIn":"100000","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"154330794","orderId":"ord_1752970193538_ncn11kdkf","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:09:53.538Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"isBaseInput":false,"level":"info","message":"Using provided token accounts","swapDirection":"WSOL -> USDC","timestamp":"2025-07-20T00:09:53.540Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:09:53.540Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752970193538_ncn11kdkf","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"10","timestamp":"2025-07-20T00:09:53.854Z","transactionSize":936}
+{"amountIn":"1000000","isBaseInput":false,"level":"info","message":"Received order creation request","minAmountOut":"1543693399","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:10:29.629Z","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"amountIn":"1000000","isBaseInput":false,"level":"info","message":"Building transaction for order","minAmountOut":"1543693399","orderId":"ord_1752970229629_avdvjkezc","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","timestamp":"2025-07-20T00:10:29.629Z","userPublicKey":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"isBaseInput":false,"level":"info","message":"Using provided token accounts","swapDirection":"WSOL -> USDC","timestamp":"2025-07-20T00:10:29.631Z","tokenAMint":"8eLeJssGBw8Z2z1y3uz1xCwzrWa2QjCqAtH7Y88MjTND","tokenBMint":"99dB8f37b5n9rnU8Yc7D4Ey5XubJuCDDSacYwE4GPEtV","user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1","userTokenA":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userTokenB":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"ammConfig":"5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B","cpSwapAuthority":"EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu","fifoState":"4d5Q2GpLkyZbQoSCWFHGRHVtHNNJqV6g3qSXdLSLRSBh","level":"info","message":"Building swap instruction keys","observationState":"7GZfqjfsHzWu68DMtgCbpjN18a1e3hrZ1kqS2zWhJVHP","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","programId":"EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq","signers":["CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa"],"timestamp":"2025-07-20T00:10:29.632Z","tokenAVault":"CfD5a6Wj9puCEL2QwSTS263KQjaCskVBoUc8iywbL2Rr","tokenBVault":"5FeimpxVzYTuGvJmKDo9ebJcSgfQpQ1fXDLb4tC3ig5p","totalKeys":15,"user":"CRbNEfDGMKHiWcibuJCbxP6KKvdGEDm2EZE46cBX4kHa","userDestToken":"GLYop6cCzsTbyidtGtzYaemAsvtnyN3BuD7dyPjjXjgy","userSourceToken":"24bLTX5C4nTNaCPKuibrg4A3r1mjpdSbbe4FeWDTPrF1"}
+{"level":"info","message":"Transaction created and partially signed","orderId":"ord_1752970229629_avdvjkezc","poolId":"9AJUf9ZQ2sWq93ose12BePBn4sq36cyqE98MiZraFLJT","requiresRelayerSignature":false,"sequence":"11","timestamp":"2025-07-20T00:10:29.946Z","transactionSize":936}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-07-20T08:21:22.729Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-07-20T08:21:23.072Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-07-20T08:21:23.074Z"}
+{"level":"info","message":"Relayer balance: 3.99380716 SOL","timestamp":"2025-07-20T08:21:24.769Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-07-20T08:21:24.770Z"}
+{"level":"info","message":"Relayer server listening on port 8085","timestamp":"2025-07-20T08:21:24.773Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8085/ws","timestamp":"2025-07-20T08:21:24.773Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8085/api/v1","timestamp":"2025-07-20T08:21:24.774Z"}
