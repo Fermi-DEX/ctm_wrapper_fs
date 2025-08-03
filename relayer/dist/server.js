@@ -42,7 +42,9 @@ app.use((0, cors_1.default)({
             'http://localhost:3000',
             'http://localhost:3001',
             'http://127.0.0.1:3000',
-            'http://127.0.0.1:3001'
+            'http://127.0.0.1:3001',
+            'https://fairswap.ferilabs.xyz',
+            'http://fairswap.ferilabs.xyz'
         ];
         // Check if the origin is allowed
         if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
