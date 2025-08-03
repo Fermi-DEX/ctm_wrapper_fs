@@ -37,8 +37,29 @@ const wss = new WebSocketServer({ server });
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Check if we have ALLOWED_ORIGINS env variable
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001'
+    ];
+    
+    // Check if the origin is allowed
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Length', 'Content-Type']
 }));
 app.use(express.json({ limit: '10mb' }));
 
@@ -137,15 +158,34 @@ app.post('/api/v1/orders', async (req, res) => {
     let transaction: Transaction | VersionedTransaction;
     try {
       const txBuffer = Buffer.from(params.transaction, 'base64');
+      logger.info('Deserializing transaction', {
+        bufferLength: txBuffer.length,
+        first10Bytes: txBuffer.slice(0, 10).toString('hex')
+      });
       
       // Try versioned transaction first
       try {
         transaction = VersionedTransaction.deserialize(txBuffer);
-      } catch {
+        logger.info('Successfully deserialized as VersionedTransaction', {
+          signaturesCount: transaction.signatures.length,
+          messageVersion: transaction.message.version,
+          staticAccountKeysCount: transaction.message.staticAccountKeys.length
+        });
+      } catch (versionedError) {
+        logger.info('Failed to deserialize as VersionedTransaction, trying legacy', {
+          error: versionedError instanceof Error ? versionedError.message : 'Unknown error'
+        });
         // Fall back to legacy transaction
         transaction = Transaction.from(txBuffer);
+        logger.info('Successfully deserialized as legacy Transaction', {
+          signaturesCount: transaction.signatures.length,
+          instructionsCount: transaction.instructions.length
+        });
       }
     } catch (error) {
+      logger.error('Failed to deserialize transaction', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
       return res.status(400).json({
         error: 'Invalid transaction format'
       });
@@ -153,16 +193,46 @@ app.post('/api/v1/orders', async (req, res) => {
 
     // Verify transaction is partially signed by user
     const userPubkey = new PublicKey(params.userPublicKey);
-    const isUserSigned = transaction instanceof VersionedTransaction
-      ? transaction.signatures.some((sig, idx) => {
-          const signer = transaction.message.staticAccountKeys[idx];
-          return signer.equals(userPubkey) && sig !== null;
-        })
-      : transaction.signatures.some((sig, idx) => {
-          if (!sig.signature) return false;
-          const signer = transaction.feePayer || transaction.instructions[0]?.keys[0]?.pubkey;
-          return signer?.equals(userPubkey);
-        });
+    let isUserSigned = false;
+    
+    if (transaction instanceof VersionedTransaction) {
+      logger.info('Checking VersionedTransaction signatures', {
+        userPublicKey: params.userPublicKey,
+        signatures: transaction.signatures.map((sig, idx) => ({
+          index: idx,
+          signer: transaction.message.staticAccountKeys[idx]?.toBase58(),
+          isUser: transaction.message.staticAccountKeys[idx]?.equals(userPubkey),
+          hasSignature: sig !== null,
+          signaturePreview: sig ? Buffer.from(sig).toString('base64').substring(0, 20) + '...' : 'null'
+        }))
+      });
+      
+      isUserSigned = transaction.signatures.some((sig, idx) => {
+        const signer = transaction.message.staticAccountKeys[idx];
+        return signer.equals(userPubkey) && sig !== null;
+      });
+    } else {
+      logger.info('Checking legacy Transaction signatures', {
+        userPublicKey: params.userPublicKey,
+        feePayer: transaction.feePayer?.toBase58(),
+        signatures: transaction.signatures.map((sig, idx) => ({
+          index: idx,
+          publicKey: sig.publicKey?.toBase58(),
+          hasSignature: sig.signature !== null
+        }))
+      });
+      
+      isUserSigned = transaction.signatures.some((sig, idx) => {
+        if (!sig.signature) return false;
+        const signer = transaction.feePayer || transaction.instructions[0]?.keys[0]?.pubkey;
+        return signer?.equals(userPubkey);
+      });
+    }
+
+    logger.info('User signature verification result', {
+      isUserSigned,
+      userPublicKey: params.userPublicKey
+    });
 
     if (!isUserSigned) {
       return res.status(400).json({

@@ -4,8 +4,8 @@ exports.RelayerService = void 0;
 const web3_js_1 = require("@solana/web3.js");
 const anchor_1 = require("@coral-xyz/anchor");
 const events_1 = require("events");
-const cp_swap_sdk_1 = require("@continuum/cp-swap-sdk");
 const config_1 = require("./config");
+const spl_token_1 = require("@solana/spl-token");
 class RelayerService extends events_1.EventEmitter {
     constructor(connection, relayerWallet, continuumProgramId, cpSwapProgramId, logger) {
         super();
@@ -26,47 +26,206 @@ class RelayerService extends events_1.EventEmitter {
     }
     async start() {
         this.isRunning = true;
-        this.logger.info('Relayer service started');
+        this.logger.info("Relayer service started");
         // Start execution loop
         this.executionLoop();
     }
     async stop() {
         this.isRunning = false;
-        this.logger.info('Relayer service stopped');
+        this.logger.info("Relayer service stopped");
     }
     async submitOrder(params) {
-        const orderId = `ord_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const orderId = `ord_${Date.now()}_${Math.random()
+            .toString(36)
+            .substr(2, 9)}`;
         const sequence = new anchor_1.BN(this.stats.totalOrders + 1);
+        // Log incoming transaction details
+        if (params.transaction) {
+            const tx = params.transaction;
+            this.logger.info("Received transaction in submitOrder", {
+                orderId,
+                transactionType: tx instanceof web3_js_1.VersionedTransaction
+                    ? "VersionedTransaction"
+                    : "Transaction",
+                hasTransaction: true,
+                userPublicKey: params.userPublicKey.toBase58(),
+                poolId: params.poolId.toBase58(),
+            });
+            if (tx instanceof web3_js_1.VersionedTransaction) {
+                this.logger.info("VersionedTransaction details at submission", {
+                    orderId,
+                    signaturesCount: tx.signatures.length,
+                    nullSignatures: tx.signatures.filter((s) => s === null).length,
+                    nonNullSignatures: tx.signatures.filter((s) => s !== null).length,
+                    numRequiredSignatures: tx.message.header.numRequiredSignatures,
+                    staticAccountKeys: tx.message.staticAccountKeys.map((k) => k.toBase58()),
+                    firstSignature: tx.signatures[0]
+                        ? Buffer.from(tx.signatures[0])
+                            .toString("base64")
+                            .substring(0, 20) + "..."
+                        : "null",
+                });
+            }
+            else {
+                this.logger.debug("Legacy Transaction details", {
+                    orderId,
+                    signaturesCount: tx.signatures.length,
+                    feePayer: tx.feePayer?.toBase58(),
+                    instructions: tx.instructions.length,
+                    signedBy: tx.signatures
+                        .filter((s) => s.signature !== null)
+                        .map((s) => s.publicKey?.toBase58()),
+                });
+            }
+        }
+        else {
+            this.logger.warn("No transaction provided in submitOrder", {
+                orderId,
+                userPublicKey: params.userPublicKey.toBase58(),
+                poolId: params.poolId.toBase58(),
+            });
+        }
         // Create order status
         const orderStatus = {
             orderId,
-            status: 'pending',
+            status: "pending",
             sequence: sequence.toString(),
             poolId: params.poolId.toBase58(),
             userPublicKey: params.userPublicKey.toBase58(),
             amountIn: params.amountIn,
+            minAmountOut: params.minAmountOut,
+            isBaseInput: params.isBaseInput,
+            transaction: params.transaction,
         };
         this.orders.set(orderId, orderStatus);
         this.executionQueue.push(orderId);
         this.stats.totalOrders++;
         // Calculate PDA (mock)
         const [orderPda] = web3_js_1.PublicKey.findProgramAddressSync([
-            Buffer.from('order'),
+            Buffer.from("order"),
             params.userPublicKey.toBuffer(),
-            sequence.toArrayLike(Buffer, 'le', 8)
+            sequence.toArrayLike(Buffer, "le", 8),
         ], this.continuumProgramId);
         const result = {
             orderId,
             orderPda,
             sequence,
             estimatedExecutionTime: 5000, // 5 seconds estimate
-            fee: '100000', // 0.0001 SOL
+            fee: "100000", // 0.0001 SOL
         };
-        this.logger.info('Order submitted', {
+        this.logger.info("Order submitted", {
             orderId,
             sequence: sequence.toString(),
             poolId: params.poolId.toBase58(),
         });
+        return result;
+    }
+    async createOrderTransaction(params) {
+        const orderId = `ord_${Date.now()}_${Math.random()
+            .toString(36)
+            .substr(2, 9)}`;
+        const sequence = new anchor_1.BN(this.stats.totalOrders + 1);
+        // Convert string parameters to required types
+        const poolId = new web3_js_1.PublicKey(params.poolId);
+        const userPublicKey = new web3_js_1.PublicKey(params.userPublicKey);
+        const amountIn = new anchor_1.BN(params.amountIn);
+        const minAmountOut = new anchor_1.BN(params.minAmountOut);
+        this.logger.info("Building transaction for order", {
+            orderId,
+            poolId: params.poolId,
+            userPublicKey: params.userPublicKey,
+            amountIn: params.amountIn,
+            minAmountOut: params.minAmountOut,
+            isBaseInput: params.isBaseInput,
+            userTokenA: params.userTokenA,
+            userTokenB: params.userTokenB,
+        });
+        // Find pool config
+        const poolConfig = config_1.config.supportedPools.find((p) => p.poolId === params.poolId);
+        if (!poolConfig) {
+            throw new Error(`Pool configuration not found for pool: ${params.poolId}`);
+        }
+        this.logger.debug("Pool configuration found", {
+            orderId,
+            poolId: params.poolId,
+            configTokenA: poolConfig.tokenAMint,
+            configTokenB: poolConfig.tokenBMint,
+            configTokenASymbol: poolConfig.tokenASymbol,
+            configTokenBSymbol: poolConfig.tokenBSymbol,
+        });
+        // Build the swap instruction with provided token accounts
+        const swapIx = await this.buildSwapImmediateInstruction(poolId, userPublicKey, amountIn, minAmountOut, params.isBaseInput, poolConfig, new web3_js_1.PublicKey(params.userTokenA), new web3_js_1.PublicKey(params.userTokenB));
+        // Create transaction and add instruction
+        const transaction = new web3_js_1.Transaction();
+        transaction.add(swapIx);
+        // Add priority fee if configured
+        if (config_1.config.priorityFeeLevel !== "none") {
+            const priorityFeeMap = {
+                low: 10000,
+                medium: 50000,
+                high: 100000,
+            };
+            const microLamports = priorityFeeMap[config_1.config.priorityFeeLevel];
+            transaction.add(web3_js_1.ComputeBudgetProgram.setComputeUnitPrice({
+                microLamports,
+            }));
+        }
+        // Set fee payer and recent blockhash
+        transaction.feePayer = userPublicKey;
+        const { blockhash } = await this.connection.getLatestBlockhash();
+        transaction.recentBlockhash = blockhash;
+        // Partially sign with relayer (if relayer needs to sign)
+        // Note: Check if relayer is a required signer
+        const requiresRelayerSignature = transaction.instructions.some((ix) => ix.keys.some((key) => key.pubkey.equals(this.relayerWallet.publicKey) && key.isSigner));
+        if (requiresRelayerSignature) {
+            transaction.partialSign(this.relayerWallet);
+            this.logger.debug("Transaction partially signed by relayer", { orderId });
+        }
+        else {
+            this.logger.debug("Relayer signature not required for this transaction", {
+                orderId,
+            });
+        }
+        // Serialize transaction to base64
+        const transactionBase64 = Buffer.from(transaction.serialize({
+            requireAllSignatures: false,
+            verifySignatures: false,
+        })).toString("base64");
+        // Calculate PDA for order
+        const [orderPda] = web3_js_1.PublicKey.findProgramAddressSync([
+            Buffer.from("order"),
+            userPublicKey.toBuffer(),
+            sequence.toArrayLike(Buffer, "le", 8),
+        ], this.continuumProgramId);
+        // Store order for tracking (without transaction since it will be signed by frontend)
+        const orderStatus = {
+            orderId,
+            status: "pending",
+            sequence: sequence.toString(),
+            poolId: params.poolId,
+            userPublicKey: params.userPublicKey,
+            amountIn: params.amountIn,
+            minAmountOut: params.minAmountOut,
+            isBaseInput: params.isBaseInput,
+            // Don't store transaction here - frontend will sign and broadcast
+        };
+        this.orders.set(orderId, orderStatus);
+        this.stats.totalOrders++;
+        this.logger.info("Transaction created and partially signed", {
+            orderId,
+            sequence: sequence.toString(),
+            poolId: params.poolId,
+            requiresRelayerSignature,
+            transactionSize: transactionBase64.length,
+        });
+        const result = {
+            orderId,
+            orderPda,
+            sequence,
+            estimatedExecutionTime: 5000,
+            fee: "100000",
+            transactionBase64,
+        };
         return result;
     }
     async getOrderStatus(orderId) {
@@ -75,36 +234,31 @@ class RelayerService extends events_1.EventEmitter {
     async cancelOrder(orderId, signature) {
         const order = this.orders.get(orderId);
         if (!order) {
-            throw new Error('Order not found');
+            throw new Error("Order not found");
         }
-        if (order.status !== 'pending') {
-            throw new Error('Can only cancel pending orders');
+        if (order.status !== "pending") {
+            throw new Error("Can only cancel pending orders");
         }
         // TODO: Verify signature
-        order.status = 'cancelled';
+        order.status = "cancelled";
         // Remove from execution queue
         const index = this.executionQueue.indexOf(orderId);
         if (index > -1) {
             this.executionQueue.splice(index, 1);
         }
-        return { refund: '0' }; // No refund in this mock
+        return { refund: "0" }; // No refund in this mock
     }
     getSupportedPools() {
-        // Mock pool list
-        return [
-            'BhPUKnKuzpEYNhSSNxkze51tMVza25rgXfEv5LWgGng2',
-            'HaDuGHuAQEocjTvN4nTM3c1uHGv3KSTasen58aizEhVW',
-        ];
+        return config_1.config.supportedPools.map((pool) => pool.poolId);
     }
     async getSupportedPoolsWithInfo() {
-        // Mock pool info
-        return this.getSupportedPools().map(poolId => ({
-            poolId,
-            token0: 'So11111111111111111111111111111111111111112',
-            token1: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-            fee: 0.003,
-            liquidity: '1000000000000',
-            volume24h: '50000000000',
+        return config_1.config.supportedPools.map((pool) => ({
+            poolId: pool.poolId,
+            token0: pool.tokenAMint,
+            token1: pool.tokenBMint,
+            fee: 0.0025, // 0.25% fee
+            liquidity: "1000000000000", // Placeholder
+            volume24h: "0", // Placeholder
             isActive: true,
         }));
     }
@@ -129,7 +283,7 @@ class RelayerService extends events_1.EventEmitter {
             successRate: this.getSuccessRate(),
             avgExecutionTime: this.getAvgExecutionTime(),
             pendingOrders: this.executionQueue.length,
-            relayerBalance: await this.connection.getBalance(this.relayerWallet.publicKey) / 1e9,
+            relayerBalance: (await this.connection.getBalance(this.relayerWallet.publicKey)) / 1e9,
         };
     }
     async executionLoop() {
@@ -139,129 +293,428 @@ class RelayerService extends events_1.EventEmitter {
                 await this.executeOrder(orderId);
             }
             // Wait before next check
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         }
     }
     async executeOrder(orderId) {
         const order = this.orders.get(orderId);
-        if (!order || order.status !== 'pending')
+        if (!order || order.status !== "pending")
             return;
         const startTime = Date.now();
         try {
-            this.logger.info('Executing order', { orderId, sequence: order.sequence });
-            // If using mock mode, keep the old behavior
-            if (config_1.config.enableMockMode) {
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                const signature = 'mock_' + Math.random().toString(36).substr(2, 9);
-                order.status = 'executed';
-                order.signature = signature;
-                order.actualAmountOut = (parseInt(order.amountIn) * 0.98).toString();
-                order.executionPrice = 0.98;
-                order.executedAt = new Date().toISOString();
-                const executionTime = Date.now() - startTime;
-                this.stats.successfulOrders++;
-                this.stats.totalExecutionTime += executionTime;
-                this.logger.info('Order executed (mock)', {
+            this.logger.info("Executing order", {
+                orderId,
+                sequence: order.sequence,
+                userPublicKey: order.userPublicKey,
+                poolId: order.poolId,
+                amountIn: order.amountIn,
+            });
+            // // Use mock mode for localnet or if explicitly enabled
+            // if (relayerConfig.enableMockMode && !relayerConfig.isDevnet) {
+            //   await new Promise(resolve => setTimeout(resolve, 2000));
+            //   const signature = 'mock_' + Math.random().toString(36).substr(2, 9);
+            //   order.status = 'executed';
+            //   order.signature = signature;
+            //   order.actualAmountOut = (parseInt(order.amountIn) * 0.98).toString();
+            //   order.executionPrice = 0.98;
+            //   order.executedAt = new Date().toISOString();
+            //   const executionTime = Date.now() - startTime;
+            //   this.stats.successfulOrders++;
+            //   this.stats.totalExecutionTime += executionTime;
+            //   this.logger.info('Order executed (mock)', {
+            //     orderId,
+            //     signature,
+            //     executionTime,
+            //   });
+            //   this.emit('orderExecuted', orderId, {
+            //     signature,
+            //     executionPrice: order.executionPrice,
+            //     actualAmountOut: order.actualAmountOut,
+            //   });
+            //   return;
+            // }
+            // Use the pre-signed transaction from the user
+            if (!order.transaction) {
+                throw new Error("No transaction found in order - user must provide signed transaction");
+            }
+            const transaction = order.transaction;
+            this.logger.info("Using pre-signed transaction", {
+                orderId,
+                transactionType: transaction instanceof web3_js_1.VersionedTransaction
+                    ? "VersionedTransaction"
+                    : "Transaction",
+                userPublicKey: order.userPublicKey,
+                poolId: order.poolId,
+            });
+            // For VersionedTransaction, add relayer signature
+            if (transaction instanceof web3_js_1.VersionedTransaction) {
+                // Check if relayer needs to sign (shouldn't for user-signed transactions)
+                this.logger.info("Processing VersionedTransaction", {
                     orderId,
-                    signature,
-                    executionTime,
+                    signaturesCount: transaction.signatures.length,
+                    messageKeys: transaction.message.staticAccountKeys.map((k) => k.toBase58()),
                 });
-                this.emit('orderExecuted', orderId, {
-                    signature,
-                    executionPrice: order.executionPrice,
-                    actualAmountOut: order.actualAmountOut,
+                // Log detailed signature information
+                // Log signature details at info level for debugging
+                this.logger.info("VersionedTransaction signature details", {
+                    orderId,
+                    signatures: transaction.signatures.map((sig, idx) => ({
+                        index: idx,
+                        isNull: sig === null,
+                        length: sig ? sig.length : 0,
+                        base58: sig
+                            ? Buffer.from(sig).toString("base64").substring(0, 20) + "..."
+                            : "null",
+                    })),
+                    feePayer: transaction.message.staticAccountKeys[0]?.toBase58(),
+                    numRequiredSignatures: transaction.message.header.numRequiredSignatures,
+                    numReadonlySignedAccounts: transaction.message.header.numReadonlySignedAccounts,
+                    numReadonlyUnsignedAccounts: transaction.message.header.numReadonlyUnsignedAccounts,
                 });
-                return;
+                // Check which accounts need signatures
+                const requiredSigners = transaction.message.staticAccountKeys
+                    .slice(0, transaction.message.header.numRequiredSignatures)
+                    .map((k) => k.toBase58());
+                this.logger.info("Required signers for transaction", {
+                    orderId,
+                    requiredSigners,
+                    relayerPublicKey: this.relayerWallet.publicKey.toBase58(),
+                    relayerIsRequired: requiredSigners.includes(this.relayerWallet.publicKey.toBase58()),
+                });
             }
-            // Real blockchain execution
-            // Build execute order instruction
-            const executeParams = {
-                poolId: new web3_js_1.PublicKey(order.poolId),
-                fifoSequence: new anchor_1.BN(order.sequence),
-                executor: this.relayerWallet.publicKey,
-            };
-            const executeIx = (0, cp_swap_sdk_1.createExecuteOrderInstruction)(executeParams);
-            const transaction = new web3_js_1.Transaction().add(executeIx);
-            // Add priority fee if configured
-            if (config_1.config.priorityFeeLevel !== 'none') {
-                const priorityFeeMap = {
-                    low: 10000,
-                    medium: 50000,
-                    high: 100000
-                };
-                const microLamports = priorityFeeMap[config_1.config.priorityFeeLevel];
-                transaction.add(web3_js_1.ComputeBudgetProgram.setComputeUnitPrice({
-                    microLamports
-                }));
+            else {
+                // For legacy Transaction, add relayer signature if needed
+                this.logger.info("Processing legacy Transaction", {
+                    orderId,
+                    signaturesCount: transaction.signatures.length,
+                    feePayer: transaction.feePayer?.toBase58(),
+                    instructionCount: transaction.instructions.length,
+                });
+                // Log detailed signature information for legacy transaction
+                this.logger.info("Legacy Transaction signature details", {
+                    orderId,
+                    signatures: transaction.signatures.map((sig, idx) => ({
+                        index: idx,
+                        publicKey: sig.publicKey?.toBase58() || "null",
+                        signature: sig.signature
+                            ? Buffer.from(sig.signature).toString("base64").substring(0, 20) +
+                                "..."
+                            : "null",
+                    })),
+                    requiredSigners: transaction.instructions
+                        .flatMap((ix) => ix.keys.filter((k) => k.isSigner).map((k) => k.pubkey.toBase58()))
+                        .filter((v, i, a) => a.indexOf(v) === i), // unique signers
+                    relayerIsRequired: transaction.instructions.some((ix) => ix.keys.some((k) => k.isSigner && k.pubkey.equals(this.relayerWallet.publicKey))),
+                });
             }
-            // Send and confirm transaction
-            const signature = await this.connection.sendTransaction(transaction, [this.relayerWallet], {
-                skipPreflight: false,
-                preflightCommitment: 'confirmed'
+            this.logger.info("Sending pre-signed transaction", {
+                orderId,
+                transactionType: transaction instanceof web3_js_1.VersionedTransaction
+                    ? "VersionedTransaction"
+                    : "Transaction",
+                feePayer: transaction instanceof web3_js_1.VersionedTransaction
+                    ? transaction.message.staticAccountKeys[0]?.toBase58()
+                    : transaction.feePayer?.toBase58() || "none",
+            });
+            // Send the pre-signed transaction (no additional signers needed)
+            let signature;
+            try {
+                if (transaction instanceof web3_js_1.VersionedTransaction) {
+                    // Check if relayer needs to sign
+                    const relayerIndex = transaction.message.staticAccountKeys
+                        .findIndex(k => k.equals(this.relayerWallet.publicKey));
+                    const relayerNeedsToSign = relayerIndex !== -1 &&
+                        relayerIndex < transaction.message.header.numRequiredSignatures;
+                    if (relayerNeedsToSign) {
+                        // Check if relayer signature is missing (all zeros)
+                        const relayerSig = transaction.signatures[relayerIndex];
+                        const isZeroSig = relayerSig && Buffer.from(relayerSig).every(b => b === 0);
+                        if (isZeroSig || !relayerSig) {
+                            this.logger.info("Adding relayer signature to transaction", {
+                                orderId,
+                                relayerIndex,
+                                relayerPublicKey: this.relayerWallet.publicKey.toBase58(),
+                            });
+                            // Sign the transaction with relayer
+                            transaction.sign([this.relayerWallet]);
+                        }
+                    }
+                    // Verify transaction is fully signed before sending
+                    const requiredSignatures = transaction.message.header.numRequiredSignatures;
+                    const providedSignatures = transaction.signatures.filter((sig) => sig !== null && !Buffer.from(sig).every(b => b === 0)).length;
+                    this.logger.info("Pre-send verification", {
+                        orderId,
+                        requiredSignatures,
+                        providedSignatures,
+                        isFullySigned: providedSignatures >= requiredSignatures,
+                    });
+                    signature = await this.connection.sendTransaction(transaction, {
+                        skipPreflight: false,
+                        preflightCommitment: "confirmed",
+                    });
+                }
+                else {
+                    // For legacy transaction, check signatures
+                    const requiredSigners = new Set();
+                    transaction.instructions.forEach((ix) => {
+                        ix.keys.forEach((k) => {
+                            if (k.isSigner)
+                                requiredSigners.add(k.pubkey.toBase58());
+                        });
+                    });
+                    const providedSigners = transaction.signatures
+                        .filter((sig) => sig.signature !== null)
+                        .map((sig) => sig.publicKey?.toBase58())
+                        .filter(Boolean);
+                    this.logger.info("Pre-send verification (legacy)", {
+                        orderId,
+                        requiredSigners: Array.from(requiredSigners),
+                        providedSigners,
+                        missingSigners: Array.from(requiredSigners).filter((s) => !providedSigners.includes(s)),
+                    });
+                    signature = await this.connection.sendRawTransaction(transaction.serialize(), {
+                        skipPreflight: false,
+                        preflightCommitment: "confirmed",
+                    });
+                }
+            }
+            catch (sendError) {
+                // Enhanced error logging for send failures
+                this.logger.error("Transaction send failed", {
+                    orderId,
+                    error: sendError instanceof Error ? sendError.message : String(sendError),
+                    errorName: sendError instanceof Error ? sendError.name : "Unknown",
+                    transactionType: transaction instanceof web3_js_1.VersionedTransaction
+                        ? "VersionedTransaction"
+                        : "Transaction",
+                });
+                // Try to get more details about the error
+                if (sendError instanceof Error &&
+                    sendError.message.includes("signature verification")) {
+                    this.logger.error("Signature verification failure details", {
+                        orderId,
+                        userPublicKey: order.userPublicKey,
+                        poolId: order.poolId,
+                        transactionKeys: transaction instanceof web3_js_1.VersionedTransaction
+                            ? transaction.message.staticAccountKeys.map((k) => k.toBase58())
+                            : "legacy transaction",
+                    });
+                }
+                throw sendError;
+            }
+            this.logger.info("Transaction sent", {
+                orderId,
+                signature,
+                status: "confirming",
             });
             // Wait for confirmation
             const latestBlockhash = await this.connection.getLatestBlockhash();
             const confirmationResult = await this.connection.confirmTransaction({
                 signature,
                 blockhash: latestBlockhash.blockhash,
-                lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
-            }, 'confirmed');
+                lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+            }, "confirmed");
+            this.logger.info("Transaction confirmation result", {
+                orderId,
+                signature,
+                confirmed: !confirmationResult.value.err,
+                error: confirmationResult.value.err
+                    ? JSON.stringify(confirmationResult.value.err)
+                    : null,
+            });
             if (confirmationResult.value.err) {
+                this.logger.error("Transaction confirmation failed", {
+                    orderId,
+                    signature,
+                    error: JSON.stringify(confirmationResult.value.err),
+                    userPublicKey: order.userPublicKey,
+                });
                 throw new Error(`Transaction failed: ${JSON.stringify(confirmationResult.value.err)}`);
             }
             // Parse transaction result to get actual output amount
             // In a real implementation, we would parse the transaction logs or account data
-            // For now, we'll estimate based on pool state
-            const poolConfig = config_1.config.supportedPools.find(p => p.poolId === order.poolId);
-            if (poolConfig) {
-                const [tokenAVault, tokenBVault] = await Promise.all([
-                    this.connection.getTokenAccountBalance(new web3_js_1.PublicKey(poolConfig.tokenAVault)),
-                    this.connection.getTokenAccountBalance(new web3_js_1.PublicKey(poolConfig.tokenBVault))
-                ]);
-                const tokenABalance = Number(tokenAVault.value.amount);
-                const tokenBBalance = Number(tokenBVault.value.amount);
-                // Simple constant product calculation
-                const amountIn = parseInt(order.amountIn);
-                const k = tokenABalance * tokenBBalance;
-                const newTokenABalance = tokenABalance + amountIn;
-                const newTokenBBalance = k / newTokenABalance;
-                const amountOut = tokenBBalance - newTokenBBalance;
-                order.actualAmountOut = Math.floor(amountOut * 0.9975).toString(); // Apply 0.25% fee
-                order.executionPrice = amountOut / amountIn;
-            }
-            else {
-                // Fallback estimation
-                order.actualAmountOut = (parseInt(order.amountIn) * 0.98).toString();
-                order.executionPrice = 0.98;
-            }
-            order.status = 'executed';
+            // For now, we'll use the min amount out as a fallback estimation
+            const amountIn = parseInt(order.amountIn);
+            const minAmountOut = parseInt(order.minAmountOut);
+            // Use minAmountOut as actual amount (conservative estimate)
+            // In production, you'd parse transaction logs to get the exact amounts
+            order.actualAmountOut = order.minAmountOut;
+            order.executionPrice = minAmountOut / amountIn;
+            order.status = "executed";
             order.signature = signature;
             order.executedAt = new Date().toISOString();
             const executionTime = Date.now() - startTime;
             this.stats.successfulOrders++;
             this.stats.totalExecutionTime += executionTime;
-            this.logger.info('Order executed', {
+            this.logger.info("Order executed", {
                 orderId,
                 signature,
                 executionTime,
-                actualAmountOut: order.actualAmountOut
+                actualAmountOut: order.actualAmountOut,
             });
-            this.emit('orderExecuted', orderId, {
+            this.emit("orderExecuted", orderId, {
                 signature,
                 executionPrice: order.executionPrice,
                 actualAmountOut: order.actualAmountOut,
             });
         }
         catch (error) {
-            order.status = 'failed';
+            order.status = "failed";
             order.error = error instanceof Error ? error.message : String(error);
             this.stats.failedOrders++;
-            this.logger.error('Order execution failed', {
-                orderId,
-                error: error instanceof Error ? error.message : String(error),
-            });
-            this.emit('orderFailed', orderId, error);
+            // Check if this is a "transaction already processed" error
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            const isAlreadyProcessed = errorMessage.includes("This transaction has already been processed") ||
+                errorMessage.includes("already been processed");
+            if (isAlreadyProcessed) {
+                // Try to extract transaction signature from the transaction
+                let transactionSignature = "unknown";
+                try {
+                    if (order.transaction) {
+                        if (order.transaction instanceof web3_js_1.VersionedTransaction) {
+                            // For VersionedTransaction, extract signature from signatures array
+                            if (order.transaction.signatures &&
+                                order.transaction.signatures.length > 0) {
+                                // Find the first non-null signature
+                                const firstSig = order.transaction.signatures.find((sig) => sig !== null);
+                                if (firstSig) {
+                                    transactionSignature =
+                                        Buffer.from(firstSig).toString("base64");
+                                }
+                            }
+                        }
+                        else {
+                            // For legacy Transaction, check signatures array
+                            if (order.transaction.signatures &&
+                                order.transaction.signatures.length > 0) {
+                                const firstSig = order.transaction.signatures.find((sig) => sig && sig.signature);
+                                if (firstSig && firstSig.signature) {
+                                    transactionSignature = firstSig.signature.toString();
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (sigError) {
+                    this.logger.debug("Could not extract transaction signature", {
+                        orderId,
+                        error: sigError,
+                    });
+                }
+                this.logger.warn("Transaction already processed - likely frontend auto-broadcast", {
+                    orderId,
+                    sequence: order.sequence,
+                    userPublicKey: order.userPublicKey,
+                    poolId: order.poolId,
+                    amountIn: order.amountIn,
+                    transactionSignature,
+                    possibleDuplicateReason: "Frontend wallet may have auto-broadcast the signed transaction",
+                    recommendation: "Frontend should send unsigned transaction to relayer",
+                    executionTime: Date.now() - startTime,
+                });
+            }
+            else {
+                this.logger.error("Order execution failed", {
+                    orderId,
+                    sequence: order.sequence,
+                    userPublicKey: order.userPublicKey,
+                    poolId: order.poolId,
+                    amountIn: order.amountIn,
+                    error: errorMessage,
+                    stack: error instanceof Error ? error.stack : undefined,
+                    executionTime: Date.now() - startTime,
+                });
+            }
+            this.emit("orderFailed", orderId, error);
         }
+    }
+    async buildSwapImmediateInstruction(poolId, user, amountIn, minAmountOut, isBaseInput, poolConfig, userTokenA, userTokenB) {
+        // Derive PDAs
+        const [fifoState] = web3_js_1.PublicKey.findProgramAddressSync([Buffer.from("fifo_state")], this.continuumProgramId);
+        const [poolAuthority, poolAuthorityBump] = web3_js_1.PublicKey.findProgramAddressSync([Buffer.from("cp_pool_authority"), poolId.toBuffer()], this.continuumProgramId);
+        const [cpSwapAuthority] = web3_js_1.PublicKey.findProgramAddressSync([Buffer.from("vault_and_lp_mint_auth_seed")], this.cpSwapProgramId);
+        // Use the provided user token accounts
+        const tokenAMint = new web3_js_1.PublicKey(poolConfig.tokenAMint);
+        const tokenBMint = new web3_js_1.PublicKey(poolConfig.tokenBMint);
+        // Determine source and destination based on swap direction
+        const userSourceToken = isBaseInput ? userTokenA : userTokenB;
+        const userDestToken = isBaseInput ? userTokenB : userTokenA;
+        this.logger.info("Using provided token accounts", {
+            user: user.toBase58(),
+            tokenAMint: tokenAMint.toBase58(),
+            tokenBMint: tokenBMint.toBase58(),
+            userTokenA: userTokenA.toBase58(),
+            userTokenB: userTokenB.toBase58(),
+            userSourceToken: userSourceToken.toBase58(),
+            userDestToken: userDestToken.toBase58(),
+            isBaseInput,
+            swapDirection: isBaseInput ? "USDC -> WSOL" : "WSOL -> USDC",
+        });
+        // Build instruction data
+        const discriminator = Buffer.from([175, 131, 44, 121, 171, 170, 38, 18]);
+        const data = Buffer.concat([
+            discriminator,
+            amountIn.toArrayLike(Buffer, "le", 8),
+            minAmountOut.toArrayLike(Buffer, "le", 8),
+            Buffer.from([isBaseInput ? 1 : 0]),
+            poolId.toBuffer(),
+            Buffer.from([poolAuthorityBump]),
+        ]);
+        const keys = [
+            // Required accounts for Continuum
+            { pubkey: fifoState, isSigner: false, isWritable: true },
+            { pubkey: this.cpSwapProgramId, isSigner: false, isWritable: false },
+            // Remaining accounts for CP-Swap CPI - user must be first
+            { pubkey: user, isSigner: true, isWritable: false },
+            { pubkey: cpSwapAuthority, isSigner: false, isWritable: false },
+            {
+                pubkey: new web3_js_1.PublicKey(poolConfig.ammConfig),
+                isSigner: false,
+                isWritable: false,
+            },
+            { pubkey: poolId, isSigner: false, isWritable: true },
+            { pubkey: userSourceToken, isSigner: false, isWritable: true },
+            { pubkey: userDestToken, isSigner: false, isWritable: true },
+            {
+                pubkey: new web3_js_1.PublicKey(poolConfig.tokenAVault),
+                isSigner: false,
+                isWritable: true,
+            },
+            {
+                pubkey: new web3_js_1.PublicKey(poolConfig.tokenBVault),
+                isSigner: false,
+                isWritable: true,
+            },
+            { pubkey: spl_token_1.TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+            { pubkey: spl_token_1.TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+            { pubkey: tokenAMint, isSigner: false, isWritable: false },
+            { pubkey: tokenBMint, isSigner: false, isWritable: false },
+            {
+                pubkey: new web3_js_1.PublicKey(poolConfig.observationState),
+                isSigner: false,
+                isWritable: true,
+            },
+        ];
+        this.logger.info("Building swap instruction keys", {
+            user: user.toBase58(),
+            poolId: poolId.toBase58(),
+            userSourceToken: userSourceToken.toBase58(),
+            userDestToken: userDestToken.toBase58(),
+            fifoState: fifoState.toBase58(),
+            cpSwapAuthority: cpSwapAuthority.toBase58(),
+            ammConfig: poolConfig.ammConfig,
+            tokenAVault: poolConfig.tokenAVault,
+            tokenBVault: poolConfig.tokenBVault,
+            observationState: poolConfig.observationState,
+            signers: keys.filter((k) => k.isSigner).map((k) => k.pubkey.toBase58()),
+            totalKeys: keys.length,
+            programId: this.continuumProgramId.toBase58(),
+        });
+        return new web3_js_1.TransactionInstruction({
+            keys,
+            programId: this.continuumProgramId,
+            data,
+        });
     }
 }
 exports.RelayerService = RelayerService;
