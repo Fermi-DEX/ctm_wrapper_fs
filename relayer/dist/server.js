@@ -14,17 +14,16 @@ const winston_1 = __importDefault(require("winston"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const helmet_1 = __importDefault(require("helmet"));
 const zod_1 = require("zod");
-const spl_token_1 = require("@solana/spl-token");
 // Configure logger
 const logger = winston_1.default.createLogger({
-    level: process.env.LOG_LEVEL || "info",
+    level: process.env.LOG_LEVEL || 'info',
     format: winston_1.default.format.combine(winston_1.default.format.timestamp(), winston_1.default.format.json()),
     transports: [
         new winston_1.default.transports.Console({
-            format: winston_1.default.format.combine(winston_1.default.format.colorize(), winston_1.default.format.simple()),
+            format: winston_1.default.format.combine(winston_1.default.format.colorize(), winston_1.default.format.simple())
         }),
-        new winston_1.default.transports.File({ filename: "relayer.log" }),
-    ],
+        new winston_1.default.transports.File({ filename: 'relayer.log' })
+    ]
 });
 // Initialize services
 const app = (0, express_1.default)();
@@ -33,40 +32,23 @@ const wss = new ws_1.WebSocketServer({ server });
 // Middleware
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin)
-            return callback(null, true);
-        // Allow localhost on any port
-        if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
-            return callback(null, true);
-        }
-        // Check against allowed origins from env
-        const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
-        if (allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-        // Default to allowing the request (you can change this to reject if needed)
-        callback(null, true);
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+    credentials: true
 }));
-app.use(express_1.default.json({ limit: "10mb" }));
+app.use(express_1.default.json({ limit: '10mb' }));
 // Rate limiting
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 60 * 1000, // 1 minute
     max: 100, // 100 requests per minute
-    message: "Too many requests from this IP",
+    message: 'Too many requests from this IP'
 });
 const submitLimiter = (0, express_rate_limit_1.default)({
     windowMs: 60 * 1000,
     max: 10, // 10 submissions per minute
-    message: "Too many order submissions",
+    message: 'Too many order submissions'
 });
-app.use("/api/", limiter);
-app.use("/api/v1/orders", submitLimiter);
+app.use('/api/', limiter);
+app.use('/api/v1/orders', submitLimiter);
 // Request validation schemas
 const submitOrderSchema = zod_1.z.object({
     transaction: zod_1.z.string(),
@@ -74,23 +56,10 @@ const submitOrderSchema = zod_1.z.object({
     amountIn: zod_1.z.string(),
     minAmountOut: zod_1.z.string(),
     isBaseInput: zod_1.z.boolean(),
-    userPublicKey: zod_1.z.string(),
-    userTokenA: zod_1.z.string().optional(),
-    userTokenB: zod_1.z.string().optional(),
-    relayerDummy: zod_1.z.string().optional(),
-    blockhash: zod_1.z.string().optional(),
-});
-const createOrderSchema = zod_1.z.object({
-    poolId: zod_1.z.string(),
-    amountIn: zod_1.z.string(),
-    minAmountOut: zod_1.z.string(),
-    isBaseInput: zod_1.z.boolean(),
-    userPublicKey: zod_1.z.string(),
-    userTokenA: zod_1.z.string(),
-    userTokenB: zod_1.z.string(),
+    userPublicKey: zod_1.z.string()
 });
 const orderStatusSchema = zod_1.z.object({
-    orderId: zod_1.z.string(),
+    orderId: zod_1.z.string()
 });
 // Initialize relayer
 let relayerService;
@@ -101,137 +70,77 @@ const wsClients = new Map();
 // Airdrop rate limiting tracking
 const airdropLastRequest = new Map();
 // Health check endpoint
-app.get("/health", (req, res) => {
+app.get('/health', (req, res) => {
     res.json({
-        status: "healthy",
+        status: 'healthy',
         relayer: relayerWallet.publicKey.toBase58(),
         timestamp: new Date().toISOString(),
-        version: process.env.npm_package_version || "1.0.0",
+        version: process.env.npm_package_version || '1.0.0'
     });
 });
 // Get relayer info
-app.get("/api/v1/info", (req, res) => {
+app.get('/api/v1/info', (req, res) => {
     res.json({
         relayerAddress: relayerWallet.publicKey.toBase58(),
         continuumProgram: config_1.config.continuumProgramId.toBase58(),
         cpSwapProgram: config_1.config.cpSwapProgramId.toBase58(),
         fee: 0, // TODO: Add relayerFeeBps to config if needed
-        minOrderSize: "0", // TODO: Add minOrderSize to config if needed
-        maxOrderSize: "1000000000000", // TODO: Add maxOrderSize to config if needed
+        minOrderSize: '0', // TODO: Add minOrderSize to config if needed
+        maxOrderSize: '1000000000000', // TODO: Add maxOrderSize to config if needed
         supportedPools: relayerService.getSupportedPools(),
         performance: {
             successRate: relayerService.getSuccessRate(),
             avgExecutionTime: relayerService.getAvgExecutionTime(),
-            totalOrders: relayerService.getTotalOrders(),
-        },
+            totalOrders: relayerService.getTotalOrders()
+        }
     });
 });
 // Submit order endpoint
-app.post("/api/v1/orders", async (req, res) => {
+app.post('/api/v1/orders', async (req, res) => {
     try {
         // Validate request
         const params = submitOrderSchema.parse(req.body);
-        logger.info("Received order submission", {
+        logger.info('Received order submission', {
             poolId: params.poolId,
             user: params.userPublicKey,
-            amountIn: params.amountIn,
+            amountIn: params.amountIn
         });
-        // Check if we have additional payload data for dummy relayer replacement
-        const hasDummyRelayer = params.relayerDummy && params.blockhash;
         // Deserialize transaction
         let transaction;
         try {
-            const txBuffer = Buffer.from(params.transaction, "base64");
+            const txBuffer = Buffer.from(params.transaction, 'base64');
             // Try versioned transaction first
             try {
                 transaction = web3_js_1.VersionedTransaction.deserialize(txBuffer);
-                logger.info("Deserialized versioned transaction", {
-                    type: "VersionedTransaction",
-                    signaturesCount: transaction.signatures.length,
-                    hasDummyRelayer
-                });
             }
             catch {
                 // Fall back to legacy transaction
                 transaction = web3_js_1.Transaction.from(txBuffer);
-                logger.info("Deserialized legacy transaction");
             }
         }
         catch (error) {
             return res.status(400).json({
-                error: "Invalid transaction format",
+                error: 'Invalid transaction format'
             });
         }
-        // If this is a transaction with dummy relayer, we need to rebuild it
-        if (hasDummyRelayer && params.relayerDummy) {
-            const dummyRelayerPubkey = new web3_js_1.PublicKey(params.relayerDummy);
-            const userPubkey = new web3_js_1.PublicKey(params.userPublicKey);
-            if (transaction instanceof web3_js_1.Transaction) {
-                // Handle legacy transaction
-                if (!transaction.feePayer?.equals(dummyRelayerPubkey)) {
-                    return res.status(400).json({
-                        error: "Invalid transaction: fee payer is not the dummy relayer",
-                    });
-                }
-                // Extract user signature
-                const userSigInfo = transaction.signatures.find(sig => sig.publicKey.equals(userPubkey) && sig.signature !== null);
-                if (!userSigInfo || !userSigInfo.signature) {
-                    return res.status(400).json({
-                        error: "Transaction must be signed by user",
-                    });
-                }
-                logger.info("Found user signature in legacy transaction, rebuilding with relayer as fee payer");
-                // Create new transaction with same instructions but relayer as fee payer
-                const newTransaction = new web3_js_1.Transaction();
-                newTransaction.feePayer = relayerWallet.publicKey;
-                newTransaction.recentBlockhash = params.blockhash;
-                // Add all instructions from original transaction
-                transaction.instructions.forEach(ix => {
-                    newTransaction.add(ix);
-                });
-                // Sign with relayer first
-                newTransaction.sign(relayerWallet);
-                // Then add user's partial signature
-                newTransaction.addSignature(userPubkey, userSigInfo.signature);
-                transaction = newTransaction;
-                logger.info("Legacy transaction rebuilt with relayer as fee payer", {
-                    relayerPubkey: relayerWallet.publicKey.toBase58(),
-                    userPubkey: userPubkey.toBase58(),
-                    signaturesCount: transaction.signatures.filter(s => s.signature !== null).length
-                });
-            }
-            else if (transaction instanceof web3_js_1.VersionedTransaction) {
-                // For now, return error - we need a different approach for VersionedTransactions
-                return res.status(400).json({
-                    error: "The relayer currently requires legacy transactions. Please use a wallet that supports legacy transaction signing.",
-                    details: "Some wallets automatically convert to VersionedTransaction. Try using a different wallet or browser extension."
-                });
-            }
+        // Verify transaction is partially signed by user
+        const userPubkey = new web3_js_1.PublicKey(params.userPublicKey);
+        const isUserSigned = transaction instanceof web3_js_1.VersionedTransaction
+            ? transaction.signatures.some((sig, idx) => {
+                const signer = transaction.message.staticAccountKeys[idx];
+                return signer.equals(userPubkey) && sig !== null;
+            })
+            : transaction.signatures.some((sig, idx) => {
+                if (!sig.signature)
+                    return false;
+                const signer = transaction.feePayer || transaction.instructions[0]?.keys[0]?.pubkey;
+                return signer?.equals(userPubkey);
+            });
+        if (!isUserSigned) {
+            return res.status(400).json({
+                error: 'Transaction must be signed by user'
+            });
         }
-        else {
-            // Original flow for non-dummy transactions
-            const userPubkey = new web3_js_1.PublicKey(params.userPublicKey);
-            let isUserSigned = false;
-            if (transaction instanceof web3_js_1.VersionedTransaction) {
-                const versionedTx = transaction;
-                isUserSigned = versionedTx.signatures.some((sig, idx) => {
-                    const signer = versionedTx.message.staticAccountKeys[idx];
-                    return signer.equals(userPubkey) && sig !== null;
-                });
-            }
-            else {
-                const legacyTx = transaction;
-                isUserSigned = legacyTx.signatures.some((sig) => {
-                    return sig.publicKey.equals(userPubkey) && sig.signature !== null;
-                });
-            }
-            if (!isUserSigned) {
-                return res.status(400).json({
-                    error: "Transaction must be signed by user",
-                });
-            }
-        }
-        logger.info("Transaction is ready, sending to relayer service");
         // Submit to relayer service
         const result = await relayerService.submitOrder({
             transaction,
@@ -239,7 +148,7 @@ app.post("/api/v1/orders", async (req, res) => {
             amountIn: params.amountIn,
             minAmountOut: params.minAmountOut,
             isBaseInput: params.isBaseInput,
-            userPublicKey: new web3_js_1.PublicKey(params.userPublicKey),
+            userPublicKey: userPubkey
         });
         // Send response
         res.json({
@@ -248,163 +157,119 @@ app.post("/api/v1/orders", async (req, res) => {
             orderPda: result.orderPda.toBase58(),
             sequence: result.sequence.toString(),
             estimatedExecutionTime: result.estimatedExecutionTime,
-            fee: result.fee,
+            fee: result.fee
         });
         // Notify WebSocket subscribers
         broadcastToOrderSubscribers(result.orderId, {
-            type: "order_submitted",
+            type: 'order_submitted',
             orderId: result.orderId,
             sequence: result.sequence.toString(),
-            status: "pending",
+            status: 'pending'
         });
     }
     catch (error) {
-        logger.error("Order submission failed", error);
+        logger.error('Order submission failed', error);
         if (error instanceof zod_1.z.ZodError) {
             return res.status(400).json({
-                error: "Invalid request parameters",
-                details: error.errors,
+                error: 'Invalid request parameters',
+                details: error.errors
             });
         }
         res.status(500).json({
-            error: error instanceof Error ? error.message : "Internal server error",
-        });
-    }
-});
-// Create order endpoint - relayer builds and partially signs transaction
-app.post("/api/v1/orders2", async (req, res) => {
-    try {
-        // Validate request
-        const params = createOrderSchema.parse(req.body);
-        logger.info("Received order creation request", {
-            poolId: params.poolId,
-            user: params.userPublicKey,
-            amountIn: params.amountIn,
-            minAmountOut: params.minAmountOut,
-            isBaseInput: params.isBaseInput,
-            userTokenA: params.userTokenA,
-            userTokenB: params.userTokenB,
-        });
-        // Build transaction with relayer signature
-        const result = await relayerService.createOrderTransaction(params);
-        res.json({
-            success: true,
-            orderId: result.orderId,
-            transaction: result.transactionBase64,
-            orderPda: result.orderPda.toBase58(),
-            sequence: result.sequence.toString(),
-            estimatedExecutionTime: result.estimatedExecutionTime,
-            fee: result.fee,
-            message: "Transaction built and partially signed by relayer. Please sign with wallet and broadcast.",
-        });
-    }
-    catch (error) {
-        logger.error("Error creating order transaction:", error);
-        if (error instanceof zod_1.z.ZodError) {
-            return res.status(400).json({
-                error: "Invalid request parameters",
-                details: error.errors,
-            });
-        }
-        res.status(500).json({
-            error: error instanceof Error ? error.message : "Internal server error",
+            error: error instanceof Error ? error.message : 'Internal server error'
         });
     }
 });
 // Get order status
-app.get("/api/v1/orders/:orderId", async (req, res) => {
+app.get('/api/v1/orders/:orderId', async (req, res) => {
     try {
-        const { orderId } = orderStatusSchema.parse({
-            orderId: req.params.orderId,
-        });
+        const { orderId } = orderStatusSchema.parse({ orderId: req.params.orderId });
         const status = await relayerService.getOrderStatus(orderId);
         if (!status) {
             return res.status(404).json({
-                error: "Order not found",
+                error: 'Order not found'
             });
         }
         res.json(status);
     }
     catch (error) {
-        logger.error("Failed to get order status", error);
+        logger.error('Failed to get order status', error);
         res.status(500).json({
-            error: "Failed to retrieve order status",
+            error: 'Failed to retrieve order status'
         });
     }
 });
 // Cancel order (only for pending orders)
-app.delete("/api/v1/orders/:orderId", async (req, res) => {
+app.delete('/api/v1/orders/:orderId', async (req, res) => {
     try {
-        const { orderId } = orderStatusSchema.parse({
-            orderId: req.params.orderId,
-        });
+        const { orderId } = orderStatusSchema.parse({ orderId: req.params.orderId });
         // Verify user signature for cancellation
         const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({
-                error: "Authorization required",
+                error: 'Authorization required'
             });
         }
         const signature = authHeader.substring(7);
         const result = await relayerService.cancelOrder(orderId, signature);
         res.json({
             success: true,
-            message: "Order cancelled",
-            refund: result.refund,
+            message: 'Order cancelled',
+            refund: result.refund
         });
         // Notify WebSocket subscribers
         broadcastToOrderSubscribers(orderId, {
-            type: "order_cancelled",
+            type: 'order_cancelled',
             orderId,
-            status: "cancelled",
+            status: 'cancelled'
         });
     }
     catch (error) {
-        logger.error("Order cancellation failed", error);
+        logger.error('Order cancellation failed', error);
         res.status(500).json({
-            error: "Failed to cancel order",
-            message: error instanceof Error ? error.message : String(error),
+            error: 'Failed to cancel order',
+            message: error instanceof Error ? error.message : String(error)
         });
     }
 });
 // Get supported pools
-app.get("/api/v1/pools", async (req, res) => {
+app.get('/api/v1/pools', async (req, res) => {
     try {
         const pools = await relayerService.getSupportedPoolsWithInfo();
         res.json({
-            pools: pools.map((pool) => ({
+            pools: pools.map(pool => ({
                 poolId: pool.poolId,
                 token0: pool.token0,
                 token1: pool.token1,
                 fee: pool.fee,
                 liquidity: pool.liquidity,
                 volume24h: pool.volume24h,
-                isActive: pool.isActive,
-            })),
+                isActive: pool.isActive
+            }))
         });
     }
     catch (error) {
-        logger.error("Failed to get pools", error);
+        logger.error('Failed to get pools', error);
         res.status(500).json({
-            error: "Failed to retrieve pools",
+            error: 'Failed to retrieve pools'
         });
     }
 });
 // Get relayer statistics
-app.get("/api/v1/stats", async (req, res) => {
+app.get('/api/v1/stats', async (req, res) => {
     try {
         const stats = await relayerService.getStatistics();
         res.json(stats);
     }
     catch (error) {
-        logger.error("Failed to get statistics", error);
+        logger.error('Failed to get statistics', error);
         res.status(500).json({
-            error: "Failed to retrieve statistics",
+            error: 'Failed to retrieve statistics'
         });
     }
 });
 // Get current pool price
-app.get("/api/v1/pools/:poolId/price", async (req, res) => {
+app.get('/api/v1/pools/:poolId/price', async (req, res) => {
     try {
         const { poolId } = req.params;
         // Validate pool ID
@@ -413,14 +278,14 @@ app.get("/api/v1/pools/:poolId/price", async (req, res) => {
         }
         catch {
             return res.status(400).json({
-                error: "Invalid pool ID",
+                error: 'Invalid pool ID'
             });
         }
         // Find pool configuration
-        const poolConfig = config_1.config.supportedPools.find((p) => p.poolId === poolId);
+        const poolConfig = config_1.config.supportedPools.find(p => p.poolId === poolId);
         if (!poolConfig) {
             return res.status(404).json({
-                error: "Pool not found",
+                error: 'Pool not found'
             });
         }
         // Fetch pool state from CP-Swap
@@ -428,13 +293,13 @@ app.get("/api/v1/pools/:poolId/price", async (req, res) => {
         const poolAccount = await connection.getAccountInfo(poolPubkey);
         if (!poolAccount) {
             return res.status(404).json({
-                error: "Pool account not found on chain",
+                error: 'Pool account not found on chain'
             });
         }
         // Fetch vault balances
         const [tokenAVault, tokenBVault] = await Promise.all([
             connection.getTokenAccountBalance(new web3_js_1.PublicKey(poolConfig.tokenAVault)),
-            connection.getTokenAccountBalance(new web3_js_1.PublicKey(poolConfig.tokenBVault)),
+            connection.getTokenAccountBalance(new web3_js_1.PublicKey(poolConfig.tokenBVault))
         ]);
         const tokenABalance = Number(tokenAVault.value.amount);
         const tokenBBalance = Number(tokenBVault.value.amount);
@@ -451,48 +316,48 @@ app.get("/api/v1/pools/:poolId/price", async (req, res) => {
                 symbol: poolConfig.tokenASymbol,
                 decimals: poolConfig.tokenADecimals,
                 balance: tokenABalance,
-                uiAmount: tokenAUiAmount,
+                uiAmount: tokenAUiAmount
             },
             tokenB: {
                 mint: poolConfig.tokenBMint,
                 symbol: poolConfig.tokenBSymbol,
                 decimals: poolConfig.tokenBDecimals,
                 balance: tokenBBalance,
-                uiAmount: tokenBUiAmount,
+                uiAmount: tokenBUiAmount
             },
             price: {
                 [`${poolConfig.tokenASymbol}Per${poolConfig.tokenBSymbol}`]: tokenAPerTokenB.toFixed(6),
-                [`${poolConfig.tokenBSymbol}Per${poolConfig.tokenASymbol}`]: tokenBPerTokenA.toFixed(6),
+                [`${poolConfig.tokenBSymbol}Per${poolConfig.tokenASymbol}`]: tokenBPerTokenA.toFixed(6)
             },
             liquidity: {
                 tokenA: tokenABalance,
                 tokenB: tokenBBalance,
-                totalValueUSD: null, // Can be calculated if we have USD prices
+                totalValueUSD: null // Can be calculated if we have USD prices
             },
-            lastUpdate: new Date().toISOString(),
+            lastUpdate: new Date().toISOString()
         };
         res.json(response);
     }
     catch (error) {
-        logger.error("Failed to get pool price", error);
+        logger.error('Failed to get pool price', error);
         res.status(500).json({
-            error: "Failed to fetch pool price",
-            message: error instanceof Error ? error.message : String(error),
+            error: 'Failed to fetch pool price',
+            message: error.message
         });
     }
 });
 // Airdrop endpoint (for testing)
-app.post("/api/v1/airdrop", async (req, res) => {
+app.post('/api/v1/airdrop', async (req, res) => {
     try {
         // Check if airdrop is enabled
         if (!config_1.config.enableAirdrop) {
             return res.status(403).json({
-                error: "Airdrop is disabled",
+                error: 'Airdrop is disabled'
             });
         }
         // Validate request
         const airdropSchema = zod_1.z.object({
-            address: zod_1.z.string().refine((addr) => {
+            address: zod_1.z.string().refine(addr => {
                 try {
                     new web3_js_1.PublicKey(addr);
                     return true;
@@ -500,190 +365,96 @@ app.post("/api/v1/airdrop", async (req, res) => {
                 catch {
                     return false;
                 }
-            }, "Invalid public key"),
-            token: zod_1.z.enum(["SOL", "USDC", "WSOL"]).optional(),
-            amount: zod_1.z.number().optional(),
+            }, 'Invalid public key'),
+            amount: zod_1.z.number().optional()
         });
         const params = airdropSchema.parse(req.body);
         const recipientPubkey = new web3_js_1.PublicKey(params.address);
-        const tokenType = params.token || "USDC";
+        const amountLamports = params.amount || (config_1.config.airdropAmountSol * 1e9);
         // Check rate limit
-        const clientIp = req.ip || req.connection.remoteAddress || "unknown";
+        const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
         const lastRequest = airdropLastRequest.get(clientIp) || 0;
         const now = Date.now();
         if (now - lastRequest < config_1.config.airdropRateLimitMs) {
             const remainingTime = Math.ceil((config_1.config.airdropRateLimitMs - (now - lastRequest)) / 1000);
             return res.status(429).json({
-                error: `Rate limited. Please wait ${remainingTime} seconds before requesting another airdrop`,
+                error: `Rate limited. Please wait ${remainingTime} seconds before requesting another airdrop`
             });
         }
-        // Handle different token types
-        if (tokenType === "SOL") {
-            // SOL airdrop
-            const amountLamports = params.amount
-                ? params.amount * 1e9
-                : config_1.config.airdropAmountSol * 1e9;
-            // Validate amount
-            const maxAmount = 2 * 1e9; // 2 SOL max
-            if (amountLamports < 0 || amountLamports > maxAmount) {
-                return res.status(400).json({
-                    error: `Invalid amount. Must be between 0 and ${maxAmount / 1e9} SOL`,
-                });
-            }
-            logger.info("Processing SOL airdrop request", {
-                recipient: recipientPubkey.toBase58(),
-                amount: amountLamports / 1e9,
-                ip: clientIp,
-            });
-            // Request airdrop
-            const signature = await connection.requestAirdrop(recipientPubkey, amountLamports);
-            // Wait for confirmation
-            const latestBlockhash = await connection.getLatestBlockhash();
-            await connection.confirmTransaction({
-                signature,
-                blockhash: latestBlockhash.blockhash,
-                lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-            });
-            // Update rate limit
-            airdropLastRequest.set(clientIp, now);
-            // Get new balance
-            const newBalance = await connection.getBalance(recipientPubkey);
-            res.json({
-                success: true,
-                token: "SOL",
-                signature,
-                amount: amountLamports / 1e9,
-                recipient: recipientPubkey.toBase58(),
-                newBalance: newBalance / 1e9,
-            });
-            logger.info("SOL airdrop successful", {
-                signature,
-                recipient: recipientPubkey.toBase58(),
-                amount: amountLamports / 1e9,
+        // Validate amount
+        const maxAmount = 10 * 1e9; // 10 SOL max
+        if (amountLamports < 0 || amountLamports > maxAmount) {
+            return res.status(400).json({
+                error: `Invalid amount. Must be between 0 and ${maxAmount / 1e9} SOL`
             });
         }
-        else {
-            // Token airdrop (USDC or WSOL)
-            if (!config_1.config.isDevnet || !config_1.config.tokens) {
-                return res.status(400).json({
-                    error: "Token airdrops only available on devnet",
-                });
-            }
-            const tokenConfig = config_1.config.tokens[tokenType];
-            if (!tokenConfig) {
-                return res.status(400).json({
-                    error: `Token ${tokenType} not supported`,
-                });
-            }
-            // Determine amount based on token type
-            let tokenAmount;
-            if (params.amount) {
-                tokenAmount = params.amount;
-            }
-            else {
-                // Default amounts from constants.json
-                const defaultAmounts = {
-                    USDC: 1000,
-                    WSOL: 10,
-                };
-                tokenAmount = defaultAmounts[tokenType] || 100;
-            }
-            const tokenMint = new web3_js_1.PublicKey(tokenConfig.mint);
-            const decimals = tokenConfig.decimals;
-            const amountUnits = tokenAmount * Math.pow(10, decimals);
-            logger.info(`Processing ${tokenType} airdrop request`, {
-                recipient: recipientPubkey.toBase58(),
-                amount: tokenAmount,
-                mint: tokenMint.toBase58(),
-                ip: clientIp,
-            });
-            // Get or create recipient token account
-            const recipientTokenAccount = (0, spl_token_1.getAssociatedTokenAddressSync)(tokenMint, recipientPubkey);
-            // Get relayer token account (source of tokens)
-            const relayerTokenAccount = (0, spl_token_1.getAssociatedTokenAddressSync)(tokenMint, relayerWallet.publicKey);
-            // Check relayer balance
-            try {
-                const relayerBalance = await connection.getTokenAccountBalance(relayerTokenAccount);
-                if (parseInt(relayerBalance.value.amount) < amountUnits) {
-                    return res.status(500).json({
-                        error: `Insufficient ${tokenType} balance in relayer wallet`,
-                    });
-                }
-            }
-            catch (err) {
-                return res.status(500).json({
-                    error: `Relayer doesn't have ${tokenType} tokens. Please fund the relayer wallet.`,
-                });
-            }
-            // Build transaction
-            const transaction = new web3_js_1.Transaction();
-            // Check if recipient token account exists
-            const recipientAccountInfo = await connection.getAccountInfo(recipientTokenAccount);
-            if (!recipientAccountInfo) {
-                // Create associated token account
-                transaction.add((0, spl_token_1.createAssociatedTokenAccountInstruction)(relayerWallet.publicKey, recipientTokenAccount, recipientPubkey, tokenMint, spl_token_1.TOKEN_PROGRAM_ID, spl_token_1.ASSOCIATED_TOKEN_PROGRAM_ID));
-            }
-            // Add transfer instruction
-            transaction.add((0, spl_token_1.createTransferInstruction)(relayerTokenAccount, recipientTokenAccount, relayerWallet.publicKey, amountUnits, [], spl_token_1.TOKEN_PROGRAM_ID));
-            // Send and confirm transaction
-            const signature = await (0, web3_js_1.sendAndConfirmTransaction)(connection, transaction, [relayerWallet]);
-            // Update rate limit
-            airdropLastRequest.set(clientIp, now);
-            // Get new balance
-            const newBalanceResponse = await connection.getTokenAccountBalance(recipientTokenAccount);
-            const newBalance = parseFloat(newBalanceResponse.value.uiAmountString || "0");
-            res.json({
-                success: true,
-                token: tokenType,
-                signature,
-                amount: tokenAmount,
-                recipient: recipientPubkey.toBase58(),
-                tokenAccount: recipientTokenAccount.toBase58(),
-                newBalance,
-            });
-            logger.info(`${tokenType} airdrop successful`, {
-                signature,
-                recipient: recipientPubkey.toBase58(),
-                amount: tokenAmount,
-            });
-        }
+        logger.info('Processing airdrop request', {
+            recipient: recipientPubkey.toBase58(),
+            amount: amountLamports / 1e9,
+            ip: clientIp
+        });
+        // Request airdrop
+        const signature = await connection.requestAirdrop(recipientPubkey, amountLamports);
+        // Wait for confirmation
+        const latestBlockhash = await connection.getLatestBlockhash();
+        await connection.confirmTransaction({
+            signature,
+            blockhash: latestBlockhash.blockhash,
+            lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        });
+        // Update rate limit
+        airdropLastRequest.set(clientIp, now);
+        // Get new balance
+        const newBalance = await connection.getBalance(recipientPubkey);
+        res.json({
+            success: true,
+            signature,
+            amount: amountLamports,
+            recipient: recipientPubkey.toBase58(),
+            newBalance
+        });
+        logger.info('Airdrop successful', {
+            signature,
+            recipient: recipientPubkey.toBase58(),
+            amount: amountLamports / 1e9
+        });
     }
     catch (error) {
-        logger.error("Airdrop failed", error);
-        if (error instanceof Error && error.name === "ZodError") {
+        logger.error('Airdrop failed', error);
+        if (error instanceof Error && error.name === 'ZodError') {
             return res.status(400).json({
-                error: "Invalid request",
-                details: error.errors,
+                error: 'Invalid request',
+                details: error.errors
             });
         }
         res.status(500).json({
-            error: "Airdrop failed",
-            message: error instanceof Error ? error.message : String(error),
+            error: 'Airdrop failed',
+            message: error instanceof Error ? error.message : String(error)
         });
     }
 });
 // WebSocket handling
-wss.on("connection", (ws, req) => {
+wss.on('connection', (ws, req) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     const path = url.pathname;
-    logger.info("WebSocket connection established", { path });
-    if (path.startsWith("/ws/orders/")) {
+    logger.info('WebSocket connection established', { path });
+    if (path.startsWith('/ws/orders/')) {
         // Subscribe to specific order updates
-        const orderId = path.substring("/ws/orders/".length);
+        const orderId = path.substring('/ws/orders/'.length);
         if (!wsClients.has(orderId)) {
             wsClients.set(orderId, new Set());
         }
         wsClients.get(orderId).add(ws);
         // Send current status
-        relayerService.getOrderStatus(orderId).then((status) => {
+        relayerService.getOrderStatus(orderId).then(status => {
             if (status) {
                 ws.send(JSON.stringify({
-                    type: "status_update",
-                    ...status,
+                    type: 'status_update',
+                    ...status
                 }));
             }
         });
-        ws.on("close", () => {
+        ws.on('close', () => {
             const clients = wsClients.get(orderId);
             if (clients) {
                 clients.delete(ws);
@@ -693,26 +464,26 @@ wss.on("connection", (ws, req) => {
             }
         });
     }
-    else if (path === "/ws/feed") {
+    else if (path === '/ws/feed') {
         // Subscribe to all order updates
-        ws.on("message", (message) => {
+        ws.on('message', (message) => {
             try {
                 const data = JSON.parse(message.toString());
-                if (data.type === "subscribe") {
+                if (data.type === 'subscribe') {
                     // Handle subscription to specific events
                     ws.send(JSON.stringify({
-                        type: "subscribed",
-                        events: data.events || ["all"],
+                        type: 'subscribed',
+                        events: data.events || ['all']
                     }));
                 }
             }
             catch (error) {
-                logger.error("Invalid WebSocket message", error);
+                logger.error('Invalid WebSocket message', error);
             }
         });
     }
-    ws.on("error", (error) => {
-        logger.error("WebSocket error", error);
+    ws.on('error', (error) => {
+        logger.error('WebSocket error', error);
     });
 });
 // Broadcast to order subscribers
@@ -720,9 +491,8 @@ function broadcastToOrderSubscribers(orderId, data) {
     const clients = wsClients.get(orderId);
     if (clients) {
         const message = JSON.stringify(data);
-        clients.forEach((client) => {
-            if (client.readyState === 1) {
-                // OPEN
+        clients.forEach(client => {
+            if (client.readyState === 1) { // OPEN
                 client.send(message);
             }
         });
@@ -732,37 +502,37 @@ function broadcastToOrderSubscribers(orderId, data) {
 async function start() {
     try {
         // Load configuration
-        logger.info("Starting Continuum relayer service...");
+        logger.info('Starting Continuum relayer service...');
         // Initialize connection - config.connection is already a Connection object
         connection = config_1.config.connection;
         // Load relayer keypair - config.relayerKeypair is already a Keypair object
         relayerWallet = config_1.config.relayerKeypair;
-        logger.info("Relayer address:", relayerWallet.publicKey.toBase58());
+        logger.info('Relayer address:', relayerWallet.publicKey.toBase58());
         // Check relayer balance
         const balance = await connection.getBalance(relayerWallet.publicKey);
         logger.info(`Relayer balance: ${balance / 1e9} SOL`);
         if (balance < 0.1 * 1e9) {
-            logger.warn("Low relayer balance! Please fund the relayer wallet.");
+            logger.warn('Low relayer balance! Please fund the relayer wallet.');
         }
         // Initialize relayer service
         relayerService = new relayerService_1.RelayerService(connection, relayerWallet, config_1.config.continuumProgramId, config_1.config.cpSwapProgramId, logger);
         // Set up order execution callbacks
-        relayerService.on("orderExecuted", (orderId, result) => {
+        relayerService.on('orderExecuted', (orderId, result) => {
             broadcastToOrderSubscribers(orderId, {
-                type: "order_executed",
+                type: 'order_executed',
                 orderId,
-                status: "executed",
+                status: 'executed',
                 signature: result.signature,
                 executionPrice: result.executionPrice,
-                actualAmountOut: result.actualAmountOut,
+                actualAmountOut: result.actualAmountOut
             });
         });
-        relayerService.on("orderFailed", (orderId, error) => {
+        relayerService.on('orderFailed', (orderId, error) => {
             broadcastToOrderSubscribers(orderId, {
-                type: "order_failed",
+                type: 'order_failed',
                 orderId,
-                status: "failed",
-                error: error.message,
+                status: 'failed',
+                error: error.message
             });
         });
         // Start relayer service
@@ -775,46 +545,46 @@ async function start() {
             logger.info(`HTTP API endpoint: http://localhost:${PORT}/api/v1`);
         });
         // Graceful shutdown
-        process.on("SIGTERM", shutdown);
-        process.on("SIGINT", shutdown);
+        process.on('SIGTERM', shutdown);
+        process.on('SIGINT', shutdown);
     }
     catch (error) {
-        logger.error("Failed to start relayer", error);
+        logger.error('Failed to start relayer', error);
         process.exit(1);
     }
 }
 async function shutdown() {
-    logger.info("Shutting down relayer...");
+    logger.info('Shutting down relayer...');
     try {
         // Stop accepting new connections
         server.close();
         // Close WebSocket connections
-        wss.clients.forEach((client) => {
+        wss.clients.forEach(client => {
             client.close();
         });
         // Stop relayer service
         if (relayerService) {
             await relayerService.stop();
         }
-        logger.info("Relayer shutdown complete");
+        logger.info('Relayer shutdown complete');
         process.exit(0);
     }
     catch (error) {
-        logger.error("Error during shutdown", error);
+        logger.error('Error during shutdown', error);
         process.exit(1);
     }
 }
 // Error handling
-process.on("uncaughtException", (error) => {
-    logger.error("Uncaught exception", error);
+process.on('uncaughtException', (error) => {
+    logger.error('Uncaught exception', error);
     shutdown();
 });
-process.on("unhandledRejection", (error) => {
-    logger.error("Unhandled rejection", error);
+process.on('unhandledRejection', (error) => {
+    logger.error('Unhandled rejection', error);
     shutdown();
 });
 // Start the server
-start().catch((error) => {
-    logger.error("Failed to start server", error);
+start().catch(error => {
+    logger.error('Failed to start server', error);
     process.exit(1);
 });

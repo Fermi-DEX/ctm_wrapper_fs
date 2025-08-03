@@ -219,18 +219,23 @@ export class RelayerService extends EventEmitter {
       );
     }
 
-    // Set fee payer to relayer (relayer will pay for transaction)
-    transaction.feePayer = this.relayerWallet.publicKey;
+    // Set fee payer and recent blockhash
+    transaction.feePayer = userPublicKey;
     const { blockhash } = await this.connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
 
-    // Sign with relayer first (as fee payer and required signer)
-    transaction.partialSign(this.relayerWallet);
-    this.logger.debug('Transaction partially signed by relayer', { 
-      orderId,
-      relayerPubkey: this.relayerWallet.publicKey.toBase58(),
-      feePayer: transaction.feePayer?.toBase58()
-    });
+    // Partially sign with relayer (if relayer needs to sign)
+    // Note: Check if relayer is a required signer
+    const requiresRelayerSignature = transaction.instructions.some(ix => 
+      ix.keys.some(key => key.pubkey.equals(this.relayerWallet.publicKey) && key.isSigner)
+    );
+
+    if (requiresRelayerSignature) {
+      transaction.partialSign(this.relayerWallet);
+      this.logger.debug('Transaction partially signed by relayer', { orderId });
+    } else {
+      this.logger.debug('Relayer signature not required for this transaction', { orderId });
+    }
 
     // Serialize transaction to base64
     const transactionBase64 = Buffer.from(transaction.serialize({
@@ -268,7 +273,7 @@ export class RelayerService extends EventEmitter {
       orderId,
       sequence: sequence.toString(),
       poolId: params.poolId,
-      relayerAsFeePayer: true,
+      requiresRelayerSignature,
       transactionSize: transactionBase64.length
     });
 
@@ -381,6 +386,35 @@ export class RelayerService extends EventEmitter {
         amountIn: order.amountIn
       });
       
+      // Use mock mode for localnet or if explicitly enabled
+      if (relayerConfig.enableMockMode && !relayerConfig.isDevnet) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const signature = 'mock_' + Math.random().toString(36).substr(2, 9);
+        order.status = 'executed';
+        order.signature = signature;
+        order.actualAmountOut = (parseInt(order.amountIn) * 0.98).toString();
+        order.executionPrice = 0.98;
+        order.executedAt = new Date().toISOString();
+        
+        const executionTime = Date.now() - startTime;
+        this.stats.successfulOrders++;
+        this.stats.totalExecutionTime += executionTime;
+        
+        this.logger.info('Order executed (mock)', {
+          orderId,
+          signature,
+          executionTime,
+        });
+        
+        this.emit('orderExecuted', orderId, {
+          signature,
+          executionPrice: order.executionPrice,
+          actualAmountOut: order.actualAmountOut,
+        });
+        
+        return;
+      }
       
       // Use the pre-signed transaction from the user
       if (!order.transaction) {
@@ -422,49 +456,7 @@ export class RelayerService extends EventEmitter {
           transaction.feePayer?.toBase58() || 'none'
       });
 
-      // Check if relayer needs to sign the transaction
-      // Relayer needs to sign if it's the fee payer OR if it's a required signer in any instruction
-      const isRelayerFeePayer = transaction instanceof VersionedTransaction ?
-        transaction.message.staticAccountKeys[0]?.equals(this.relayerWallet.publicKey) :
-        transaction.feePayer?.equals(this.relayerWallet.publicKey);
-
-      const needsRelayerSignature = isRelayerFeePayer || (
-        transaction instanceof VersionedTransaction ?
-          transaction.message.staticAccountKeys.some((key, idx) => 
-            key.equals(this.relayerWallet.publicKey) && 
-            transaction.message.isAccountSigner(idx)
-          ) :
-          transaction.instructions.some(ix => 
-            ix.keys.some(key => 
-              key.pubkey.equals(this.relayerWallet.publicKey) && 
-              key.isSigner
-            )
-          )
-      );
-
-      if (needsRelayerSignature) {
-        this.logger.debug('Adding relayer signature to transaction', {
-          orderId,
-          relayerPubkey: this.relayerWallet.publicKey.toBase58()
-        });
-
-        if (transaction instanceof VersionedTransaction) {
-          // Sign the versioned transaction
-          transaction.sign([this.relayerWallet]);
-        } else {
-          // Sign the legacy transaction
-          // Check if relayer hasn't already signed
-          const relayerSigned = transaction.signatures.some(sig => 
-            sig.publicKey.equals(this.relayerWallet.publicKey) && sig.signature !== null
-          );
-          
-          if (!relayerSigned) {
-            transaction.partialSign(this.relayerWallet);
-          }
-        }
-      }
-
-      // Send the signed transaction
+      // Send the pre-signed transaction (no additional signers needed)
       let signature: string;
       if (transaction instanceof VersionedTransaction) {
         signature = await this.connection.sendTransaction(transaction, {
