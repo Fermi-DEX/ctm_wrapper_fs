@@ -1,7 +1,7 @@
 {
   "devnet": {
     "programs": {
-      "continuum": "EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq",
+      "continuum": "7uLunyG2Gr1uVNAS32qS4pKn7KkioTRvmKwpYgJeK65m",
       "cpSwap": "GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp"
     },
     "tokens": {
@@ -16,6 +16,18 @@
         "decimals": 9,
         "symbol": "WSOL",
         "name": "Wrapped SOL (Devnet)"
+      },
+      "USDC2": {
+        "mint": "CC4cMdCgYpga9C4ZLAD9GWewbzmBUuTco1H1cQQpCXM5",
+        "decimals": 6,
+        "symbol": "USDC2",
+        "name": "USD Coin 2 (Devnet)"
+      },
+      "WSOL2": {
+        "mint": "4UB6j9Zp1yvhAWQUXviTaiuA6eaMUoGVCjt27T95UtSy",
+        "decimals": 9,
+        "symbol": "WSOL2",
+        "name": "Wrapped SOL 2 (Devnet)"
       }
     },
     "pools": {
