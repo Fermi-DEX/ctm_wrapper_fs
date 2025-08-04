@@ -18,7 +18,7 @@ exports.config = {
         wsEndpoint: process.env.DEVNET_WS_URL || 'wss://api.devnet.solana.com'
     }),
     // Server
-    port: parseInt(process.env.PORT || '8085', 10),
+    port: parseInt(process.env.PORT || '8080', 10),
     // Programs
     continuumProgramId: new web3_js_1.PublicKey('EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq'),
     cpSwapProgramId: new web3_js_1.PublicKey('GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp'),

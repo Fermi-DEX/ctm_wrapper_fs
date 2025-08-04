@@ -214,11 +214,60 @@ start_docker() {
         exit 1
     fi
     
+    # Check if SSL certificates exist
+    SSL_CERT_PATH="/home/ec2-user/fs4/ssl1.cert"
+    SSL_KEY_PATH="/home/ec2-user/fs4/ssl2.key"
+    
+    if [ ! -f "$SSL_CERT_PATH" ] || [ ! -f "$SSL_KEY_PATH" ]; then
+        echo -e "${RED}Error: SSL certificates not found${NC}"
+        echo "Expected locations:"
+        echo "  - Certificate: $SSL_CERT_PATH"
+        echo "  - Key: $SSL_KEY_PATH"
+        exit 1
+    fi
+    
+    # Create ssl directory and copy certificates
+    mkdir -p ssl
+    cp "$SSL_CERT_PATH" ssl/ssl1.cert
+    cp "$SSL_KEY_PATH" ssl/ssl2.key
+    
     # Build and start containers
+    echo -e "${YELLOW}Building and starting Docker containers...${NC}"
     docker-compose up --build -d
     
-    echo -e "${GREEN}Relayer started in Docker${NC}"
-    echo "View logs: docker-compose logs -f relayer"
+    # Wait a moment for containers to start
+    echo -e "${YELLOW}Waiting for services to start...${NC}"
+    sleep 3
+    
+    # Check if containers are running
+    echo -e "${YELLOW}Checking container status...${NC}"
+    if docker ps | grep -q "continuum-nginx"; then
+        echo -e "${GREEN}✓ Nginx container is running${NC}"
+    else
+        echo -e "${RED}✗ Nginx container failed to start${NC}"
+    fi
+    
+    if docker ps | grep -q "continuum-relayer"; then
+        echo -e "${GREEN}✓ Relayer container is running${NC}"
+    else
+        echo -e "${RED}✗ Relayer container failed to start${NC}"
+    fi
+    
+    # Show recent logs
+    echo -e "${YELLOW}Recent startup logs:${NC}"
+    docker-compose logs --tail=10
+    
+    echo -e "${GREEN}Relayer started in Docker with Nginx reverse proxy${NC}"
+    echo "Services:"
+    echo "  - HTTP: http://localhost:80"
+    echo "  - HTTPS: https://localhost:443 (redirects to HTTP)"
+    echo "  - Direct relayer: http://localhost:8080 (internal only)"
+    echo ""
+    echo "Commands:"
+    echo "  - View all logs: docker-compose logs -f"
+    echo "  - View relayer logs: docker-compose logs -f relayer"
+    echo "  - View nginx logs: docker-compose logs -f nginx"
+    echo "  - Check status: ./start-relayer.sh status"
 }
 
 # Function to start with PM2
@@ -271,16 +320,24 @@ show_status() {
     
     # Check if running with Docker
     if command -v docker &> /dev/null && docker ps | grep -q "continuum-relayer"; then
-        docker ps | grep continuum-relayer
+        echo -e "${GREEN}Docker containers:${NC}"
+        docker ps | grep -E "continuum-(relayer|nginx)" | awk '{print "  - " $NF ": " $7}'
     fi
     
-    # Check HTTP endpoint
+    # Check Nginx reverse proxy
+    if curl -s http://localhost:80/health > /dev/null 2>&1; then
+        echo -e "${GREEN}Nginx reverse proxy: Running${NC}"
+        echo -e "${GREEN}  - HTTP: http://localhost:80${NC}"
+        echo -e "${GREEN}  - HTTPS: https://localhost:443 (redirects to HTTP)${NC}"
+    fi
+    
+    # Check direct relayer endpoint
     PORT=$(grep PORT "$CONFIG_FILE" | cut -d'=' -f2 || echo "8086")
     if curl -s http://localhost:$PORT/health > /dev/null 2>&1; then
-        echo -e "${GREEN}HTTP API: Running on http://localhost:$PORT${NC}"
+        echo -e "${GREEN}Direct relayer API: Running on http://localhost:$PORT${NC}"
         echo -e "${GREEN}WebSocket: Available on ws://localhost:$PORT/ws${NC}"
     else
-        echo -e "${RED}Service not responding on port $PORT${NC}"
+        echo -e "${RED}Relayer service not responding on port $PORT${NC}"
     fi
 }
 
@@ -333,7 +390,8 @@ main() {
             if [ "$RELAYER_MODE" == "pm2" ]; then
                 pm2 logs continuum-relayer
             elif [ "$RELAYER_MODE" == "docker" ]; then
-                docker-compose logs -f relayer
+                echo "Following logs for all services (use Ctrl+C to exit)..."
+                docker-compose logs -f
             else
                 tail -f logs/relayer.log
             fi

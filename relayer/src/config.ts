@@ -152,7 +152,7 @@ export const config: RelayerConfig = {
   retryDelayMs: parseInt(process.env.RETRY_DELAY_MS || '1000'),
   
   // Server config
-  port: parseInt(process.env.PORT || '8085'),
+  port: parseInt(process.env.PORT || '8080'),
   host: process.env.HOST || '0.0.0.0',
   
   // Pool configurations

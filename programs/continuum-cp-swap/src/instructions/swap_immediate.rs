@@ -42,17 +42,13 @@ pub fn swap_immediate(
     // Build the swap instruction data
     let mut ix_data = Vec::new();
     
-    if is_base_input {
-        // swap_base_input discriminator
-        ix_data.extend_from_slice(&[143, 190, 90, 218, 196, 30, 51, 222]); 
-        ix_data.extend_from_slice(&amount_in.to_le_bytes());
-        ix_data.extend_from_slice(&min_amount_out.to_le_bytes());
-    } else {
-        // swap_base_output discriminator
-        ix_data.extend_from_slice(&[55, 217, 98, 86, 163, 74, 180, 173]);
-        ix_data.extend_from_slice(&min_amount_out.to_le_bytes()); // max_amount_in
-        ix_data.extend_from_slice(&amount_in.to_le_bytes()); // amount_out
-    }
+    // IMPORTANT: We now use swap_base_input for both directions to maintain consistent semantics
+    // This gives us "I have exactly X tokens, give me at least Y tokens" behavior regardless of direction
+    
+    // Always use swap_base_input discriminator
+    ix_data.extend_from_slice(&[143, 190, 90, 218, 196, 30, 51, 222]); 
+    ix_data.extend_from_slice(&amount_in.to_le_bytes());      // exact tokens to swap
+    ix_data.extend_from_slice(&min_amount_out.to_le_bytes()); // minimum tokens to receive
     
     // Build account metas from remaining accounts
     // The client must pass accounts in the correct order for CP-Swap
@@ -98,7 +94,7 @@ pub fn swap_immediate(
         sequence,
         pool_id,
         amount_in,
-        is_base_input,
+        is_base_input, // Note: This parameter is now only used for logging, not for routing
     });
     
     msg!("Swap {} executed successfully", sequence);

@@ -26,7 +26,7 @@ export const config = {
   RETRY_DELAY_MS: parseInt(process.env.RETRY_DELAY_MS || '1000'),
   
   // Server
-  PORT: parseInt(process.env.PORT || '8085'),
+  PORT: parseInt(process.env.PORT || '8080'),
   ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || '*',
   
   // Logging

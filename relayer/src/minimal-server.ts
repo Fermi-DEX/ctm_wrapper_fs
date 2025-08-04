@@ -12,6 +12,9 @@ const app = express();
 const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
+// Trust proxy headers when running behind nginx
+app.set('trust proxy', true);
+
 // Middleware
 app.use(cors());
 app.use(express.json());

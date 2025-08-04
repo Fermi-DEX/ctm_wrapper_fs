@@ -47,8 +47,8 @@
       "enabled": true,
       "amounts": {
         "SOL": 0.1,
-        "USDC": 1000,
-        "WSOL": 10
+        "USDC": 2000000000,
+        "WSOL": 2000000000
       }
     }
   },

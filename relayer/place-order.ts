@@ -12,7 +12,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Configuration
-const RELAYER_URL = 'http://localhost:8085';
+const RELAYER_URL = 'http://localhost:8080';
 const RPC_URL = 'http://localhost:8899';
 
 async function placeOrder() {
@@ -182,7 +182,7 @@ async function placeOrder() {
   } catch (error) {
     console.error('\n❌ Error placing order:', error);
     console.error('\nTroubleshooting tips:');
-    console.error('1. Make sure the relayer is running on port 8085');
+    console.error('1. Make sure the relayer is running on port 8080');
     console.error('2. Ensure you have a valid pool created');
     console.error('3. Check that you have sufficient token balance');
     console.error('4. Verify the Continuum program is deployed');

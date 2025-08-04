@@ -47,6 +47,8 @@ dotenv.config();
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);
 const wss = new ws_1.WebSocketServer({ server });
+// Trust proxy headers when running behind nginx
+app.set('trust proxy', true);
 // Middleware
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());

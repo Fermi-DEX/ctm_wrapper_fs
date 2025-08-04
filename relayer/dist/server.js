@@ -30,6 +30,8 @@ const logger = winston_1.default.createLogger({
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);
 const wss = new ws_1.WebSocketServer({ server });
+// Trust proxy headers when running behind nginx
+app.set('trust proxy', true);
 // Middleware
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({
@@ -43,8 +45,8 @@ app.use((0, cors_1.default)({
             'http://localhost:3001',
             'http://127.0.0.1:3000',
             'http://127.0.0.1:3001',
-            'https://fairswap.ferilabs.xyz',
-            'http://fairswap.ferilabs.xyz'
+            'https://fairswap.fermilabs.xyz',
+            'http://fairswap.fermilabs.xyz'
         ];
         // Check if the origin is allowed
         if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
@@ -136,7 +138,11 @@ app.post('/api/v1/orders', async (req, res) => {
         logger.info('Received order submission', {
             poolId: params.poolId,
             user: params.userPublicKey,
-            amountIn: params.amountIn
+            amountIn: params.amountIn,
+            minAmountOut: params.minAmountOut,
+            isBaseInput: params.isBaseInput,
+            hasTransaction: !!params.transaction,
+            timestamp: new Date().toISOString()
         });
         // Deserialize transaction
         let transaction;
@@ -565,8 +571,8 @@ app.post('/api/v1/airdrop', async (req, res) => {
             else {
                 // Default amounts from constants.json
                 const defaultAmounts = {
-                    USDC: 1000,
-                    WSOL: 10
+                    USDC: 2000000000,
+                    WSOL: 2000000000
                 };
                 tokenAmount = defaultAmounts[tokenType] || 100;
             }

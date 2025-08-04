@@ -18,7 +18,7 @@ export const config = {
   ),
   
   // Server
-  port: parseInt(process.env.PORT || '8085', 10),
+  port: parseInt(process.env.PORT || '8080', 10),
   
   // Programs
   continuumProgramId: new PublicKey('EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq'),

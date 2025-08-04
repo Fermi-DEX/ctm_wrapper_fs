@@ -1,15 +1,32 @@
 version: '3.8'
 
 services:
+  # Nginx reverse proxy and HTTPS redirect
+  nginx:
+    image: nginx:alpine
+    container_name: continuum-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    networks:
+      - continuum-network
+    depends_on:
+      - relayer
+
   relayer:
     build: .
     container_name: continuum-relayer
     restart: unless-stopped
-    ports:
-      - "8085:8085"
+    # Remove external port mapping as nginx will handle it
+    expose:
+      - "8080"
     environment:
       - NODE_ENV=production
-      - PORT=8085
+      - PORT=8080
       - LOG_LEVEL=info
     env_file:
       - .env
@@ -20,7 +37,7 @@ services:
     networks:
       - continuum-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8085/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -37,38 +37,38 @@ When running with `--devnet`, the relayer automatically:
 
 ### Health Check
 ```bash
-curl http://localhost:8085/health
+curl http://localhost:8080/health
 ```
 
 ### Get Pool Info
 ```bash
-curl http://localhost:8085/api/v1/pools
+curl http://localhost:8080/api/v1/pools
 ```
 
 ### Get Pool Price
 ```bash
-curl http://localhost:8085/api/v1/pools/{poolId}/price
+curl http://localhost:8080/api/v1/pools/{poolId}/price
 ```
 
 ### Request Airdrop
 
 For SOL:
 ```bash
-curl -X POST http://localhost:8085/api/v1/airdrop \
+curl -X POST http://localhost:8080/api/v1/airdrop \
   -H "Content-Type: application/json" \
   -d '{"address": "YOUR_WALLET", "token": "SOL", "amount": 0.1}'
 ```
 
 For USDC (1000 tokens):
 ```bash
-curl -X POST http://localhost:8085/api/v1/airdrop \
+curl -X POST http://localhost:8080/api/v1/airdrop \
   -H "Content-Type: application/json" \
   -d '{"address": "YOUR_WALLET", "token": "USDC"}'
 ```
 
 For WSOL (10 tokens):
 ```bash
-curl -X POST http://localhost:8085/api/v1/airdrop \
+curl -X POST http://localhost:8080/api/v1/airdrop \
   -H "Content-Type: application/json" \
   -d '{"address": "YOUR_WALLET", "token": "WSOL"}'
 ```
@@ -76,7 +76,7 @@ curl -X POST http://localhost:8085/api/v1/airdrop \
 ### Submit Order
 
 ```bash
-curl -X POST http://localhost:8085/api/v1/orders \
+curl -X POST http://localhost:8080/api/v1/orders \
   -H "Content-Type: application/json" \
   -d '{
     "transaction": "BASE64_ENCODED_TRANSACTION",

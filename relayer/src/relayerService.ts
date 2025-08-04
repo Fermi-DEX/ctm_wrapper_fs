@@ -229,6 +229,17 @@ export class RelayerService extends EventEmitter {
     const amountIn = new BN(params.amountIn);
     const minAmountOut = new BN(params.minAmountOut);
 
+    // Log the conversion details
+    this.logger.info("Parameter conversion details", {
+      orderId,
+      amountIn_string: params.amountIn,
+      amountIn_BN: amountIn.toString(),
+      amountIn_hex: amountIn.toString(16),
+      minAmountOut_string: params.minAmountOut,
+      minAmountOut_BN: minAmountOut.toString(),
+      minAmountOut_hex: minAmountOut.toString(16),
+    });
+
     this.logger.info("Building transaction for order", {
       orderId,
       poolId: params.poolId,
@@ -607,6 +618,37 @@ export class RelayerService extends EventEmitter {
             : transaction.feePayer?.toBase58() || "none",
       });
 
+      // Log transaction details before sending
+      this.logger.info("Transaction details before sending", {
+        orderId,
+        instructionCount: transaction instanceof VersionedTransaction 
+          ? transaction.message.compiledInstructions.length 
+          : transaction.instructions.length,
+      });
+
+      // Log instruction data for debugging
+      if (transaction instanceof VersionedTransaction) {
+        transaction.message.compiledInstructions.forEach((ix, index) => {
+          this.logger.info("Instruction data", {
+            orderId,
+            instructionIndex: index,
+            programIdIndex: ix.programIdIndex,
+            data: Buffer.from(ix.data).toString("hex"),
+            dataLength: ix.data.length,
+          });
+        });
+      } else {
+        transaction.instructions.forEach((ix, index) => {
+          this.logger.info("Instruction data", {
+            orderId,
+            instructionIndex: index,
+            programId: ix.programId.toBase58(),
+            data: ix.data.toString("hex"),
+            dataLength: ix.data.length,
+          });
+        });
+      }
+
       // Send the pre-signed transaction (no additional signers needed)
       let signature: string;
       try {
@@ -921,10 +963,24 @@ export class RelayerService extends EventEmitter {
 
     // Build instruction data
     const discriminator = Buffer.from([175, 131, 44, 121, 171, 170, 38, 18]);
+    const amountInBuffer = amountIn.toArrayLike(Buffer, "le", 8);
+    const minAmountOutBuffer = minAmountOut.toArrayLike(Buffer, "le", 8);
+    
+    // Log the buffer contents
+    this.logger.info("Instruction data encoding", {
+      discriminator: discriminator.toString("hex"),
+      amountIn_value: amountIn.toString(),
+      amountIn_buffer: amountInBuffer.toString("hex"),
+      minAmountOut_value: minAmountOut.toString(),
+      minAmountOut_buffer: minAmountOutBuffer.toString("hex"),
+      isBaseInput,
+      poolId: poolId.toBase58(),
+    });
+    
     const data = Buffer.concat([
       discriminator,
-      amountIn.toArrayLike(Buffer, "le", 8),
-      minAmountOut.toArrayLike(Buffer, "le", 8),
+      amountInBuffer,
+      minAmountOutBuffer,
       Buffer.from([isBaseInput ? 1 : 0]),
       poolId.toBuffer(),
       Buffer.from([poolAuthorityBump]),

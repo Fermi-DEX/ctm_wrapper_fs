@@ -34,6 +34,9 @@ const app = express();
 const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
+// Trust proxy headers when running behind nginx
+app.set('trust proxy', true);
+
 // Middleware
 app.use(helmet());
 app.use(cors({
@@ -153,7 +156,11 @@ app.post('/api/v1/orders', async (req, res) => {
     logger.info('Received order submission', {
       poolId: params.poolId,
       user: params.userPublicKey,
-      amountIn: params.amountIn
+      amountIn: params.amountIn,
+      minAmountOut: params.minAmountOut,
+      isBaseInput: params.isBaseInput,
+      hasTransaction: !!params.transaction,
+      timestamp: new Date().toISOString()
     });
 
     // Deserialize transaction
@@ -629,8 +636,8 @@ app.post('/api/v1/airdrop', async (req, res) => {
       } else {
         // Default amounts from constants.json
         const defaultAmounts = {
-          USDC: 1000,
-          WSOL: 10
+          USDC: 2000000000,
+          WSOL: 2000000000
         };
         tokenAmount = defaultAmounts[tokenType] || 100;
       }

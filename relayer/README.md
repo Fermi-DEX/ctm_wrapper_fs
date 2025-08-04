@@ -40,7 +40,7 @@ CONTINUUM_PROGRAM_ID=A548C9LR926hnAWvYDjsXJddidhfzLf3bRb8dmYPgRKn
 CP_SWAP_PROGRAM_ID=GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp
 
 # Server Configuration
-PORT=8085
+PORT=8080
 ALLOWED_ORIGINS=https://app.continuum.fi,http://localhost:3000
 
 # Performance Settings
@@ -122,7 +122,7 @@ docker-compose down
 
 ```bash
 # Check health
-curl http://localhost:8085/health
+curl http://localhost:8080/health
 
 # Expected response:
 {
@@ -133,7 +133,7 @@ curl http://localhost:8085/health
 }
 
 # Get relayer info
-curl http://localhost:8085/api/v1/info
+curl http://localhost:8080/api/v1/info
 ```
 
 ### 5. Fund the Relayer
@@ -290,13 +290,13 @@ ws.send(JSON.stringify({
 
 ```bash
 # 1. Test if the relayer is reachable
-curl -I http://localhost:8085/health
+curl -I http://localhost:8080/health
 
 # 2. Test with a simple health check
-curl http://localhost:8085/health | jq
+curl http://localhost:8080/health | jq
 
 # 3. Test WebSocket connectivity
-wscat -c ws://localhost:8085/ws/orders/test-order
+wscat -c ws://localhost:8080/ws/orders/test-order
 ```
 
 ### Making API Calls
@@ -305,10 +305,10 @@ wscat -c ws://localhost:8085/ws/orders/test-order
 
 ```bash
 # Get relayer information
-curl http://localhost:8085/api/v1/info | jq
+curl http://localhost:8080/api/v1/info | jq
 
 # Submit an order
-curl -X POST http://localhost:8085/api/v1/orders \
+curl -X POST http://localhost:8080/api/v1/orders \
   -H "Content-Type: application/json" \
   -d '{
     "transaction": "base64_encoded_transaction_here",
@@ -320,13 +320,13 @@ curl -X POST http://localhost:8085/api/v1/orders \
   }' | jq
 
 # Check order status
-curl http://localhost:8085/api/v1/orders/ord_1234567890 | jq
+curl http://localhost:8080/api/v1/orders/ord_1234567890 | jq
 
 # Get supported pools
-curl http://localhost:8085/api/v1/pools | jq
+curl http://localhost:8080/api/v1/pools | jq
 
 # Get statistics
-curl http://localhost:8085/api/v1/stats | jq
+curl http://localhost:8080/api/v1/stats | jq
 ```
 
 #### Using HTTPie (more user-friendly)
@@ -336,10 +336,10 @@ curl http://localhost:8085/api/v1/stats | jq
 pip install httpie
 
 # Get relayer info
-http GET localhost:8085/api/v1/info
+http GET localhost:8080/api/v1/info
 
 # Submit order
-http POST localhost:8085/api/v1/orders \
+http POST localhost:8080/api/v1/orders \
   transaction="base64_encoded_transaction" \
   poolId="BhPUKnKuzpEYNhSSNxkze51tMVza25rgXfEv5LWgGng2" \
   amountIn="1000000000" \
@@ -355,7 +355,7 @@ http POST localhost:8085/api/v1/orders \
 const fetch = require('node-fetch');
 
 async function testRelayer() {
-  const RELAYER_URL = 'http://localhost:8085';
+  const RELAYER_URL = 'http://localhost:8080';
   
   // Test health
   const health = await fetch(`${RELAYER_URL}/health`).then(r => r.json());
@@ -480,7 +480,7 @@ class ContinuumRelayerClient {
 
 // Usage example
 async function main() {
-  const client = new ContinuumRelayerClient('http://localhost:8085');
+  const client = new ContinuumRelayerClient('http://localhost:8080');
   
   // Check if relayer is healthy
   const health = await client.checkHealth();
@@ -531,7 +531,7 @@ function SwapComponent() {
   const [relayerStatus, setRelayerStatus] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
   
-  const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:8085';
+  const RELAYER_URL = process.env.REACT_APP_RELAYER_URL || 'http://localhost:8080';
   
   // Check relayer status on mount
   useEffect(() => {
@@ -773,18 +773,18 @@ server {
 # 1. Check if the service is running
 ps aux | grep "node.*server.js"
 
-# 2. Check if port 8085 is listening
-netstat -tlnp | grep 8085
+# 2. Check if port 8080 is listening
+netstat -tlnp | grep 8080
 # or
-lsof -i :8085
+lsof -i :8080
 
 # 3. Test local connectivity
-curl -v http://localhost:8085/health
+curl -v http://localhost:8080/health
 
 # 4. Check firewall rules
 sudo ufw status
-# If firewall is blocking, allow port 8085:
-sudo ufw allow 8085
+# If firewall is blocking, allow port 8080:
+sudo ufw allow 8080
 
 # 5. Check logs
 tail -f server.log
@@ -797,7 +797,7 @@ pm2 logs continuum-relayer
 ```javascript
 // Test WebSocket with Node.js
 const WebSocket = require('ws');
-const ws = new WebSocket('ws://localhost:8085/ws/orders/test');
+const ws = new WebSocket('ws://localhost:8080/ws/orders/test');
 
 ws.on('open', () => {
   console.log('Connected!');
@@ -850,8 +850,8 @@ ALLOWED_ORIGINS=*
 
 3. **"Port already in use"**
    ```bash
-   # Find process using port 8085
-   lsof -i :8085
+   # Find process using port 8080
+   lsof -i :8080
    # Kill the process
    kill -9 <PID>
    ```
@@ -898,7 +898,7 @@ Create a test script `test-relayer.sh`:
 ```bash
 #!/bin/bash
 
-RELAYER_URL="http://localhost:8085"
+RELAYER_URL="http://localhost:8080"
 
 echo "Testing Relayer at $RELAYER_URL"
 echo "================================"
@@ -923,7 +923,7 @@ fi
 
 # Test WebSocket
 echo -n "WebSocket: "
-timeout 2 wscat -c ws://localhost:8085/ws/orders/test 2>&1 | grep -q "Connected" && echo "✅ OK" || echo "❌ Failed"
+timeout 2 wscat -c ws://localhost:8080/ws/orders/test 2>&1 | grep -q "Connected" && echo "✅ OK" || echo "❌ Failed"
 
 echo "================================"
 ```
