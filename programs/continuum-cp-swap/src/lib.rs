@@ -73,4 +73,24 @@ pub mod continuum_cp_swap {
     ) -> Result<()> {
         instructions::swap_immediate(ctx, amount_in, min_amount_out, is_base_input, pool_id, pool_authority_bump)
     }
+
+    /// Deposit liquidity to a pool managed by Continuum
+    pub fn deposit_liquidity(
+        ctx: Context<DepositLiquidity>,
+        lp_token_amount: u64,
+        maximum_token_0_amount: u64,
+        maximum_token_1_amount: u64,
+    ) -> Result<()> {
+        instructions::deposit_liquidity(ctx, lp_token_amount, maximum_token_0_amount, maximum_token_1_amount)
+    }
+
+    /// Withdraw liquidity from a pool managed by Continuum
+    pub fn withdraw_liquidity(
+        ctx: Context<WithdrawLiquidity>,
+        lp_token_amount: u64,
+        minimum_token_0_amount: u64,
+        minimum_token_1_amount: u64,
+    ) -> Result<()> {
+        instructions::withdraw_liquidity(ctx, lp_token_amount, minimum_token_0_amount, minimum_token_1_amount)
+    }
 }

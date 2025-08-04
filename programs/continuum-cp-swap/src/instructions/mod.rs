@@ -5,6 +5,8 @@ pub mod submit_order_simple;
 pub mod execute_order;
 pub mod cancel_order;
 pub mod swap_immediate;
+pub mod deposit_liquidity;
+pub mod withdraw_liquidity;
 
 pub use initialize::*;
 pub use initialize_cp_swap_pool::*;
@@ -13,3 +15,5 @@ pub use submit_order_simple::*;
 pub use execute_order::*;
 pub use cancel_order::*;
 pub use swap_immediate::*;
+pub use deposit_liquidity::*;
+pub use withdraw_liquidity::*;
