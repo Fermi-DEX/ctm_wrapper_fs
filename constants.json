@@ -45,6 +45,21 @@
         "authorityType": 1,
         "feeRate": 2500,
         "createdAt": "2025-07-18T14:47:27.141Z"
+      },
+      "WSOL2-USDC2": {
+        "poolId": "2Eh68aHw6oWe41zq9qtS6twatw58Txb4Fd3E4uE5x2Br",
+        "ammConfig": "5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B",
+        "ammConfigIndex": 0,
+        "tokenAMint": "4UB6j9Zp1yvhAWQUXviTaiuA6eaMUoGVCjt27T95UtSy",
+        "tokenBMint": "CC4cMdCgYpga9C4ZLAD9GWewbzmBUuTco1H1cQQpCXM5",
+        "tokenAVault": "FrnZAbxuPDDTuBXQzA6hosdPBsq2TUETQgLudkvy6aru",
+        "tokenBVault": "8dN1Xnvj6d8aVGpnPZRvWTsiGef4T1XfvLVaqQceSNpw",
+        "lpMint": "DLAWM6r6tmPkqzQkQEP8Wp8WgvU3eA58g6iZ3pN3uS8d",
+        "observationState": "FVYafXTvMPdp4kJQAMnrcQB9VZHqhUPrUvDcUkoWHoaQ",
+        "cpPoolAuthority": "5dBxPxjisrVBUH76rxcqUgAuKvLyhXvgmSpG3CbyrL2",
+        "authorityType": 1,
+        "feeRate": 2500,
+        "createdAt": "2025-08-04T13:06:00.000Z"
       }
     },
     "pdas": {
