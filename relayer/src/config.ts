@@ -89,20 +89,45 @@ const DEFAULT_LOCALNET_POOL: PoolConfig = {
 function getPoolConfig(): PoolConfig[] {
   if (isDevnet && networkConfig.pools) {
     // Convert devnet pool format to PoolConfig
-    const devnetPool = networkConfig.pools['USDC-WSOL'];
-    return [{
-      poolId: devnetPool.poolId,
-      ammConfig: devnetPool.ammConfig,
-      tokenAMint: devnetPool.tokenAMint,
-      tokenBMint: devnetPool.tokenBMint,
-      tokenASymbol: 'USDC',
-      tokenBSymbol: 'WSOL',
-      tokenADecimals: 6,
-      tokenBDecimals: 9,
-      tokenAVault: devnetPool.tokenAVault,
-      tokenBVault: devnetPool.tokenBVault,
-      observationState: devnetPool.observationState,
-    }];
+    const pools: PoolConfig[] = [];
+    
+    // Add USDC-WSOL pool
+    const usdcWsolPool = networkConfig.pools['USDC-WSOL'];
+    if (usdcWsolPool) {
+      pools.push({
+        poolId: usdcWsolPool.poolId,
+        ammConfig: usdcWsolPool.ammConfig,
+        tokenAMint: usdcWsolPool.tokenAMint,
+        tokenBMint: usdcWsolPool.tokenBMint,
+        tokenASymbol: 'USDC',
+        tokenBSymbol: 'WSOL',
+        tokenADecimals: 6,
+        tokenBDecimals: 9,
+        tokenAVault: usdcWsolPool.tokenAVault,
+        tokenBVault: usdcWsolPool.tokenBVault,
+        observationState: usdcWsolPool.observationState,
+      });
+    }
+    
+    // Add WSOL2-USDC2 pool
+    const wsol2Usdc2Pool = networkConfig.pools['WSOL2-USDC2'];
+    if (wsol2Usdc2Pool) {
+      pools.push({
+        poolId: wsol2Usdc2Pool.poolId,
+        ammConfig: wsol2Usdc2Pool.ammConfig,
+        tokenAMint: wsol2Usdc2Pool.tokenAMint,
+        tokenBMint: wsol2Usdc2Pool.tokenBMint,
+        tokenASymbol: 'WSOL2',
+        tokenBSymbol: 'USDC2',
+        tokenADecimals: 9,
+        tokenBDecimals: 6,
+        tokenAVault: wsol2Usdc2Pool.tokenAVault,
+        tokenBVault: wsol2Usdc2Pool.tokenBVault,
+        observationState: wsol2Usdc2Pool.observationState,
+      });
+    }
+    
+    return pools;
   }
   
   // For localnet, use environment or default

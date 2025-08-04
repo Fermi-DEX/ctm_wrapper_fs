@@ -138,7 +138,19 @@ app.get('/api/v1/info', (req, res) => {
     fee: 0, // TODO: Add relayerFeeBps to config if needed
     minOrderSize: '0', // TODO: Add minOrderSize to config if needed
     maxOrderSize: '1000000000000', // TODO: Add maxOrderSize to config if needed
-    supportedPools: relayerService.getSupportedPools(),
+    supportedPools: config.supportedPools.map(pool => ({
+      poolId: pool.poolId,
+      tokenA: {
+        mint: pool.tokenAMint,
+        symbol: pool.tokenASymbol,
+        decimals: pool.tokenADecimals
+      },
+      tokenB: {
+        mint: pool.tokenBMint,
+        symbol: pool.tokenBSymbol,
+        decimals: pool.tokenBDecimals
+      }
+    })),
     performance: {
       successRate: relayerService.getSuccessRate(),
       avgExecutionTime: relayerService.getAvgExecutionTime(),
@@ -544,7 +556,7 @@ app.post('/api/v1/airdrop', async (req, res) => {
           return false;
         }
       }, 'Invalid public key'),
-      token: z.enum(['SOL', 'USDC', 'WSOL']).optional(),
+      token: z.enum(['SOL', 'USDC', 'WSOL', 'USDC2', 'WSOL2']).optional(),
       amount: z.number().optional()
     });
 
@@ -637,7 +649,9 @@ app.post('/api/v1/airdrop', async (req, res) => {
         // Default amounts from constants.json
         const defaultAmounts = {
           USDC: 2000000000,
-          WSOL: 2000000000
+          WSOL: 2000000000,
+          USDC2: 2000000000,
+          WSOL2: 2000000000
         };
         tokenAmount = defaultAmounts[tokenType] || 100;
       }
