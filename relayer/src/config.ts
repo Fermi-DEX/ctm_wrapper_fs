@@ -88,17 +88,17 @@ const DEFAULT_LOCALNET_POOL: PoolConfig = {
 // Get pool configuration based on network
 function getPoolConfig(): PoolConfig[] {
   if (isDevnet && networkConfig.pools) {
-    // Convert devnet pool format to PoolConfig
-    const devnetPool = networkConfig.pools['USDC-WSOL'];
+    // Convert devnet pool format to PoolConfig - using WSOL2-USDC2 pool
+    const devnetPool = networkConfig.pools['WSOL2-USDC2'];
     return [{
       poolId: devnetPool.poolId,
       ammConfig: devnetPool.ammConfig,
       tokenAMint: devnetPool.tokenAMint,
       tokenBMint: devnetPool.tokenBMint,
-      tokenASymbol: 'USDC',
-      tokenBSymbol: 'WSOL',
-      tokenADecimals: 6,
-      tokenBDecimals: 9,
+      tokenASymbol: 'WSOL',
+      tokenBSymbol: 'USDC',
+      tokenADecimals: 9,
+      tokenBDecimals: 6,
       tokenAVault: devnetPool.tokenAVault,
       tokenBVault: devnetPool.tokenBVault,
       observationState: devnetPool.observationState,
