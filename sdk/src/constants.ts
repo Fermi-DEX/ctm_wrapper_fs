@@ -1,7 +1,7 @@
 import { PublicKey } from '@solana/web3.js';
 
 // Program IDs
-export const CONTINUUM_PROGRAM_ID = new PublicKey('A548C9LR926hnAWvYDjsXJddidhfzLf3bRb8dmYPgRKn');
+export const CONTINUUM_PROGRAM_ID = new PublicKey('7uLunyG2Gr1uVNAS32qS4pKn7KkioTRvmKwpYgJeK65m');
 export const CP_SWAP_PROGRAM_ID = new PublicKey('GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp');
 
 // Seeds

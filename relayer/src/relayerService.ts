@@ -962,7 +962,8 @@ export class RelayerService extends EventEmitter {
     });
 
     // Build instruction data
-    const discriminator = Buffer.from([175, 131, 44, 121, 171, 170, 38, 18]);
+    // Using swap_base_input discriminator to match the wrapper's expectation
+    const discriminator = Buffer.from([143, 190, 90, 218, 196, 30, 51, 222]);
     const amountInBuffer = amountIn.toArrayLike(Buffer, "le", 8);
     const minAmountOutBuffer = minAmountOut.toArrayLike(Buffer, "le", 8);
     
@@ -987,13 +988,15 @@ export class RelayerService extends EventEmitter {
     ]);
 
     const keys = [
-      // Required accounts for Continuum
+      // Required accounts for Continuum (named accounts in the instruction)
       { pubkey: fifoState, isSigner: false, isWritable: true },
       { pubkey: this.cpSwapProgramId, isSigner: false, isWritable: false },
 
-      // Remaining accounts for CP-Swap CPI - user must be first
-      { pubkey: user, isSigner: true, isWritable: false },
-      { pubkey: cpSwapAuthority, isSigner: false, isWritable: false },
+      // Remaining accounts for CP-Swap CPI (passed through remaining_accounts)
+      // The CTM wrapper expects these in remaining_accounts, NOT including cp_swap_program
+      { pubkey: user, isSigner: true, isWritable: false }, // User (actual transaction signer)
+      { pubkey: poolAuthority, isSigner: false, isWritable: false }, // Pool authority (signs via CPI)
+      { pubkey: cpSwapAuthority, isSigner: false, isWritable: false }, // CP-Swap vault authority
       {
         pubkey: new PublicKey(poolConfig.ammConfig),
         isSigner: false,
@@ -1026,6 +1029,8 @@ export class RelayerService extends EventEmitter {
     this.logger.info("Building swap instruction keys", {
       user: user.toBase58(),
       poolId: poolId.toBase58(),
+      poolAuthority: poolAuthority.toBase58(),
+      poolAuthorityBump,
       userSourceToken: userSourceToken.toBase58(),
       userDestToken: userDestToken.toBase58(),
       fifoState: fifoState.toBase58(),

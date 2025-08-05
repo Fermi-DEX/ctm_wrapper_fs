@@ -491,7 +491,7 @@ app.post('/api/v1/airdrop', async (req, res) => {
                     return false;
                 }
             }, 'Invalid public key'),
-            token: zod_1.z.enum(['SOL', 'USDC', 'WSOL']).optional(),
+            token: zod_1.z.enum(['SOL', 'USDC', 'WSOL', 'USDC2', 'WSOL2']).optional(),
             amount: zod_1.z.number().optional()
         });
         const params = airdropSchema.parse(req.body);
@@ -572,7 +572,9 @@ app.post('/api/v1/airdrop', async (req, res) => {
                 // Default amounts from constants.json
                 const defaultAmounts = {
                     USDC: 2000000000,
-                    WSOL: 2000000000
+                    WSOL: 2000000000,
+                    USDC2: 2000000000,
+                    WSOL2: 2000000000
                 };
                 tokenAmount = defaultAmounts[tokenType] || 100;
             }

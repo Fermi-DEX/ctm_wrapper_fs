@@ -89,20 +89,27 @@ const DEFAULT_LOCALNET_POOL: PoolConfig = {
 function getPoolConfig(): PoolConfig[] {
   if (isDevnet && networkConfig.pools) {
     // Convert devnet pool format to PoolConfig
-    const devnetPool = networkConfig.pools['USDC-WSOL'];
-    return [{
-      poolId: devnetPool.poolId,
-      ammConfig: devnetPool.ammConfig,
-      tokenAMint: devnetPool.tokenAMint,
-      tokenBMint: devnetPool.tokenBMint,
-      tokenASymbol: 'USDC',
-      tokenBSymbol: 'WSOL',
-      tokenADecimals: 6,
-      tokenBDecimals: 9,
-      tokenAVault: devnetPool.tokenAVault,
-      tokenBVault: devnetPool.tokenBVault,
-      observationState: devnetPool.observationState,
-    }];
+    const pools: PoolConfig[] = [];
+    
+    // Add all pools from the configuration
+    for (const [poolName, poolData] of Object.entries(networkConfig.pools as Record<string, any>)) {
+      const [tokenA, tokenB] = poolName.split('-');
+      pools.push({
+        poolId: poolData.poolId,
+        ammConfig: poolData.ammConfig,
+        tokenAMint: poolData.tokenAMint,
+        tokenBMint: poolData.tokenBMint,
+        tokenASymbol: tokenA,
+        tokenBSymbol: tokenB,
+        tokenADecimals: tokenA.includes('SOL') ? 9 : 6,
+        tokenBDecimals: tokenB.includes('SOL') ? 9 : 6,
+        tokenAVault: poolData.tokenAVault,
+        tokenBVault: poolData.tokenBVault,
+        observationState: poolData.observationState,
+      });
+    }
+    
+    return pools;
   }
   
   // For localnet, use environment or default

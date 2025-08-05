@@ -20,7 +20,7 @@ exports.config = {
     // Server
     port: parseInt(process.env.PORT || '8080', 10),
     // Programs
-    continuumProgramId: new web3_js_1.PublicKey('EaeWUSam5Li1fzCcCs33oE4jCLQT4F6RJXgrPYZaoKqq'),
+    continuumProgramId: new web3_js_1.PublicKey('7uLunyG2Gr1uVNAS32qS4pKn7KkioTRvmKwpYgJeK65m'),
     cpSwapProgramId: new web3_js_1.PublicKey('GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp'),
     // Relayer wallet
     relayerKeypair: (() => {
@@ -29,25 +29,34 @@ exports.config = {
         const keypairData = JSON.parse(fs_1.default.readFileSync(keypairPath, 'utf8'));
         return web3_js_1.Keypair.fromSecretKey(new Uint8Array(keypairData));
     })(),
-    // Supported pools (to be loaded from devnet-pool.json if available)
+    // Supported pools (to be loaded from constants.json)
     supportedPools: (() => {
-        const poolConfigPath = path_1.default.join(__dirname, '../../scripts/devnet/devnet-pool.json');
-        if (fs_1.default.existsSync(poolConfigPath)) {
-            const poolInfo = JSON.parse(fs_1.default.readFileSync(poolConfigPath, 'utf8'));
-            return [{
-                    poolId: poolInfo.poolId,
-                    ammConfig: poolInfo.ammConfig,
-                    tokenAMint: poolInfo.token0,
-                    tokenBMint: poolInfo.token1,
-                    tokenASymbol: poolInfo.token0Symbol,
-                    tokenBSymbol: poolInfo.token1Symbol,
-                    tokenADecimals: poolInfo.token0Decimals,
-                    tokenBDecimals: poolInfo.token1Decimals,
-                    tokenAVault: '', // To be fetched from pool state
-                    tokenBVault: '', // To be fetched from pool state
-                    authority: poolInfo.authority,
-                    authorityType: 'custom'
-                }];
+        const constantsPath = path_1.default.join(__dirname, '../../constants.json');
+        if (fs_1.default.existsSync(constantsPath)) {
+            const constants = JSON.parse(fs_1.default.readFileSync(constantsPath, 'utf8'));
+            const pools = [];
+            // Load all pools from devnet configuration
+            if (constants.devnet && constants.devnet.pools) {
+                for (const [poolName, poolData] of Object.entries(constants.devnet.pools)) {
+                    const [tokenA, tokenB] = poolName.split('-');
+                    pools.push({
+                        poolId: poolData.poolId,
+                        ammConfig: poolData.ammConfig,
+                        tokenAMint: poolData.tokenAMint,
+                        tokenBMint: poolData.tokenBMint,
+                        tokenASymbol: tokenA,
+                        tokenBSymbol: tokenB,
+                        tokenADecimals: tokenA.includes('SOL') ? 9 : 6,
+                        tokenBDecimals: tokenB.includes('SOL') ? 9 : 6,
+                        tokenAVault: poolData.tokenAVault,
+                        tokenBVault: poolData.tokenBVault,
+                        authority: poolData.cpPoolAuthority,
+                        authorityType: 'custom',
+                        observationState: poolData.observationState
+                    });
+                }
+            }
+            return pools;
         }
         return [];
     })(),

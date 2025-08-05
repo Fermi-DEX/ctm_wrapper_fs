@@ -82,11 +82,14 @@ pub fn swap_immediate(
         &[pool_authority_bump],
     ];
     
-    // Pass all remaining accounts directly to invoke_signed
-    // The client must ensure the correct ordering
+    // Build accounts array for CPI, including the cp_swap_program
+    let mut cpi_accounts = vec![ctx.accounts.cp_swap_program.to_account_info()];
+    cpi_accounts.extend(ctx.remaining_accounts.iter().cloned());
+    
+    // Pass all accounts to invoke_signed
     invoke_signed(
         &ix,
-        ctx.remaining_accounts,
+        &cpi_accounts,
         &[pool_authority_seeds],
     )?;
     
