@@ -1,6 +1,6 @@
-use anchor_lang::prelude::*;
-use crate::state::*;
 use crate::errors::*;
+use crate::state::*;
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 pub struct SubmitOrder<'info> {
@@ -11,14 +11,14 @@ pub struct SubmitOrder<'info> {
         constraint = !fifo_state.emergency_pause @ ContinuumError::EmergencyPause,
     )]
     pub fifo_state: Account<'info, FifoState>,
-    
+
     #[account(
         seeds = [b"pool_registry", pool_id.key().as_ref()],
         bump,
         constraint = pool_registry.is_active @ ContinuumError::PoolNotRegistered,
     )]
     pub pool_registry: Account<'info, CpSwapPoolRegistry>,
-    
+
     #[account(
         init,
         payer = user,
@@ -27,13 +27,13 @@ pub struct SubmitOrder<'info> {
         bump
     )]
     pub order_state: Account<'info, OrderState>,
-    
+
     #[account(mut)]
     pub user: Signer<'info>,
-    
+
     /// CHECK: The pool ID to validate against registry
     pub pool_id: UncheckedAccount<'info>,
-    
+
     pub system_program: Program<'info, System>,
     pub clock: Sysvar<'info, Clock>,
 }
@@ -47,19 +47,22 @@ pub fn submit_order(
     let fifo_state = &mut ctx.accounts.fifo_state;
     let order_state = &mut ctx.accounts.order_state;
     let clock = &ctx.accounts.clock;
-    
+
     // Get current sequence for PDA (before increment)
     let pda_sequence = fifo_state.current_sequence;
     msg!("Submit order - Current FIFO sequence: {}", pda_sequence);
-    
+
     // Increment sequence for next order
     let new_sequence = fifo_state.current_sequence + 1;
     fifo_state.current_sequence = new_sequence;
     msg!("Submit order - New FIFO sequence: {}", new_sequence);
-    
+
     // Store order details with the incremented sequence
     order_state.sequence = new_sequence;
-    msg!("Submit order - Order stored with sequence: {}", new_sequence);
+    msg!(
+        "Submit order - Order stored with sequence: {}",
+        new_sequence
+    );
     order_state.user = ctx.accounts.user.key();
     order_state.pool_id = ctx.accounts.pool_id.key();
     order_state.amount_in = amount_in;
@@ -68,7 +71,7 @@ pub fn submit_order(
     order_state.status = OrderStatus::Pending;
     order_state.submitted_at = clock.unix_timestamp;
     order_state.executed_at = None;
-    
+
     emit!(OrderSubmitted {
         sequence: new_sequence,
         user: ctx.accounts.user.key(),
@@ -76,8 +79,13 @@ pub fn submit_order(
         amount_in,
         is_base_input,
     });
-    
-    msg!("Order {} submitted by user {} (PDA uses sequence {})", new_sequence, ctx.accounts.user.key(), pda_sequence);
-    
+
+    msg!(
+        "Order {} submitted by user {} (PDA uses sequence {})",
+        new_sequence,
+        ctx.accounts.user.key(),
+        pda_sequence
+    );
+
     Ok(())
 }

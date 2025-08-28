@@ -38,17 +38,12 @@ pub mod continuum_cp_swap {
     }
 
     /// Execute the next order in the FIFO queue
-    pub fn execute_order(
-        ctx: Context<ExecuteOrder>,
-        expected_sequence: u64,
-    ) -> Result<()> {
+    pub fn execute_order(ctx: Context<ExecuteOrder>, expected_sequence: u64) -> Result<()> {
         instructions::execute_order(ctx, expected_sequence)
     }
 
     /// Cancel an order (only by original submitter)
-    pub fn cancel_order(
-        ctx: Context<CancelOrder>,
-    ) -> Result<()> {
+    pub fn cancel_order(ctx: Context<CancelOrder>) -> Result<()> {
         instructions::cancel_order(ctx)
     }
 
@@ -63,12 +58,26 @@ pub mod continuum_cp_swap {
     }
 
     /// Immediate swap - submit and execute in one transaction
-    pub fn swap_immediate(
-        ctx: Context<SwapImmediate>,
+    pub fn swap_immediate<'info>(
+        ctx: Context<'_, '_, '_, 'info, SwapImmediate<'info>>,
         amount_in: u64,
         min_amount_out: u64,
         is_base_input: bool,
     ) -> Result<()> {
         instructions::swap_immediate(ctx, amount_in, min_amount_out, is_base_input)
+    }
+
+    /// Deposit liquidity into a CP-Swap pool using Continuum authority
+    pub fn deposit_liquidity<'info>(
+        ctx: Context<'_, '_, '_, 'info, DepositLiquidity<'info>>,
+    ) -> Result<()> {
+        instructions::deposit_liquidity(ctx)
+    }
+
+    /// Withdraw liquidity from a CP-Swap pool using Continuum authority
+    pub fn withdraw_liquidity<'info>(
+        ctx: Context<'_, '_, '_, 'info, WithdrawLiquidity<'info>>,
+    ) -> Result<()> {
+        instructions::withdraw_liquidity(ctx)
     }
 }
