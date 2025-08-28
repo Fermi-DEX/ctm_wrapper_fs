@@ -57,7 +57,7 @@ interface OrderResult {
 
 interface OrderStatus {
   orderId: string;
-  status: "pending" | "executed" | "failed" | "cancelled";
+  status: "pending" | "executed" | "failed" | "cancelled" | "skipped";
   sequence: string;
   poolId: string;
   userPublicKey: string;
@@ -70,6 +70,7 @@ interface OrderStatus {
   signature?: string;
   executedAt?: string;
   error?: string;
+  simulationError?: string;
 }
 
 interface PoolInfo {
@@ -85,6 +86,8 @@ interface PoolInfo {
 export class RelayerService extends EventEmitter {
   private orders: Map<string, OrderStatus> = new Map();
   private executionQueue: string[] = [];
+  private skippedQueue: string[] = [];
+  private nextSequence = new BN(1);
   private isRunning = false;
   private stats = {
     totalOrders: 0,
@@ -120,7 +123,7 @@ export class RelayerService extends EventEmitter {
     const orderId = `ord_${Date.now()}_${Math.random()
       .toString(36)
       .substr(2, 9)}`;
-    const sequence = new BN(this.stats.totalOrders + 1);
+    const sequence = this.nextSequence;
 
     // Log incoming transaction details
     if (params.transaction) {
@@ -221,7 +224,7 @@ export class RelayerService extends EventEmitter {
     const orderId = `ord_${Date.now()}_${Math.random()
       .toString(36)
       .substr(2, 9)}`;
-    const sequence = new BN(this.stats.totalOrders + 1);
+    const sequence = this.nextSequence;
 
     // Convert string parameters to required types
     const poolId = new PublicKey(params.poolId);
@@ -437,6 +440,12 @@ export class RelayerService extends EventEmitter {
 
   getTotalOrders(): number {
     return this.stats.totalOrders;
+  }
+
+  getSkippedTransactions(): OrderStatus[] {
+    return this.skippedQueue
+      .map((id) => this.orders.get(id))
+      .filter((o): o is OrderStatus => o !== undefined);
   }
 
   async getStatistics() {
@@ -692,6 +701,18 @@ export class RelayerService extends EventEmitter {
             isFullySigned: providedSignatures >= requiredSignatures,
           });
 
+          const simulation = await this.connection.simulateTransaction(transaction);
+          if (simulation.value.err) {
+            this.logger.error("Transaction simulation failed", {
+              orderId,
+              error: JSON.stringify(simulation.value.err),
+            });
+            order.status = "skipped";
+            order.simulationError = JSON.stringify(simulation.value.err);
+            this.skippedQueue.push(orderId);
+            return;
+          }
+
           signature = await this.connection.sendTransaction(transaction, {
             skipPreflight: false,
             preflightCommitment: "confirmed",
@@ -718,6 +739,18 @@ export class RelayerService extends EventEmitter {
               (s) => !providedSigners.includes(s)
             ),
           });
+
+          const simulation = await this.connection.simulateTransaction(transaction);
+          if (simulation.value.err) {
+            this.logger.error("Transaction simulation failed", {
+              orderId,
+              error: JSON.stringify(simulation.value.err),
+            });
+            order.status = "skipped";
+            order.simulationError = JSON.stringify(simulation.value.err);
+            this.skippedQueue.push(orderId);
+            return;
+          }
 
           signature = await this.connection.sendRawTransaction(
             transaction.serialize(),
@@ -828,6 +861,8 @@ export class RelayerService extends EventEmitter {
         executionPrice: order.executionPrice,
         actualAmountOut: order.actualAmountOut,
       });
+
+      this.nextSequence = this.nextSequence.add(new BN(1));
     } catch (error) {
       order.status = "failed";
       order.error = error instanceof Error ? error.message : String(error);
