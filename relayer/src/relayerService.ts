@@ -473,6 +473,26 @@ export class RelayerService extends EventEmitter {
     }
   }
 
+  private requeuePendingOrders(fromOrderId: string) {
+    const pendingOrders = Array.from(this.orders.values())
+      .filter(
+        (o) => o.status === "pending" || o.orderId === fromOrderId
+      )
+      .sort((a, b) => new BN(a.sequence).cmp(new BN(b.sequence)))
+      .map((o) => o.orderId);
+
+    const uniqueExisting = new Set(pendingOrders);
+    this.executionQueue = [
+      ...pendingOrders,
+      ...this.executionQueue.filter((id) => !uniqueExisting.has(id)),
+    ];
+
+    this.logger.info("Requeued pending orders", {
+      fromOrderId,
+      requeuedOrderIds: pendingOrders,
+    });
+  }
+
   private async executeOrder(orderId: string) {
     const order = this.orders.get(orderId);
     if (!order || order.status !== "pending") return;
@@ -867,6 +887,8 @@ export class RelayerService extends EventEmitter {
       order.status = "failed";
       order.error = error instanceof Error ? error.message : String(error);
       this.stats.failedOrders++;
+
+      this.requeuePendingOrders(orderId);
 
       // Check if this is a "transaction already processed" error
       const errorMessage =
