@@ -1,6 +1,6 @@
-use anchor_lang::prelude::*;
-use crate::state::*;
 use crate::errors::*;
+use crate::state::*;
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 pub struct CancelOrder<'info> {
@@ -12,25 +12,25 @@ pub struct CancelOrder<'info> {
         constraint = order_state.user == user.key() @ ContinuumError::Unauthorized,
     )]
     pub order_state: Account<'info, OrderState>,
-    
+
     #[account(mut)]
     pub user: Signer<'info>,
-    
+
     pub clock: Sysvar<'info, Clock>,
 }
 
 pub fn cancel_order(ctx: Context<CancelOrder>) -> Result<()> {
     let order_state = &mut ctx.accounts.order_state;
-    
+
     order_state.status = OrderStatus::Cancelled;
     order_state.executed_at = Some(ctx.accounts.clock.unix_timestamp);
-    
+
     emit!(OrderCancelled {
         sequence: order_state.sequence,
         user: ctx.accounts.user.key(),
     });
-    
+
     msg!("Order {} cancelled by user", order_state.sequence);
-    
+
     Ok(())
 }
