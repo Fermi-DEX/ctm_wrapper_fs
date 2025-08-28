@@ -63,8 +63,8 @@ pub mod continuum_cp_swap {
     }
 
     /// Immediate swap - submit and execute in one transaction
-    pub fn swap_immediate(
-        ctx: Context<SwapImmediate>,
+    pub fn swap_immediate<'info>(
+        ctx: Context<'_, '_, '_, 'info, SwapImmediate<'info>>,
         amount_in: u64,
         min_amount_out: u64,
         is_base_input: bool,
@@ -72,5 +72,43 @@ pub mod continuum_cp_swap {
         pool_authority_bump: u8,
     ) -> Result<()> {
         instructions::swap_immediate(ctx, amount_in, min_amount_out, is_base_input, pool_id, pool_authority_bump)
+    }
+
+    /// Deposit liquidity into a CP-Swap pool
+    pub fn deposit_liquidity<'info>(
+        ctx: Context<'_, '_, '_, 'info, DepositLiquidity<'info>>,
+        min_lp_amount: u64,
+        max_token_0_amount: u64,
+        max_token_1_amount: u64,
+        pool_id: Pubkey,
+        pool_authority_bump: u8,
+    ) -> Result<()> {
+        instructions::deposit_liquidity(
+            ctx,
+            min_lp_amount,
+            max_token_0_amount,
+            max_token_1_amount,
+            pool_id,
+            pool_authority_bump,
+        )
+    }
+
+    /// Withdraw liquidity from a CP-Swap pool
+    pub fn withdraw_liquidity<'info>(
+        ctx: Context<'_, '_, '_, 'info, WithdrawLiquidity<'info>>,
+        lp_amount: u64,
+        min_token_0_amount: u64,
+        min_token_1_amount: u64,
+        pool_id: Pubkey,
+        pool_authority_bump: u8,
+    ) -> Result<()> {
+        instructions::withdraw_liquidity(
+            ctx,
+            lp_amount,
+            min_token_0_amount,
+            min_token_1_amount,
+            pool_id,
+            pool_authority_bump,
+        )
     }
 }

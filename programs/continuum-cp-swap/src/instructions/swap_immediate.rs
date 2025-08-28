@@ -23,8 +23,8 @@ pub struct SwapImmediate<'info> {
     // are passed through in remaining_accounts to avoid deserialization
 }
 
-pub fn swap_immediate(
-    ctx: Context<SwapImmediate>,
+pub fn swap_immediate<'info>(
+    ctx: Context<'_, '_, '_, 'info, SwapImmediate<'info>>,
     amount_in: u64,
     min_amount_out: u64,
     is_base_input: bool,
@@ -83,8 +83,10 @@ pub fn swap_immediate(
     ];
     
     // Build accounts array for CPI, including the cp_swap_program
-    let mut cpi_accounts = vec![ctx.accounts.cp_swap_program.to_account_info()];
-    cpi_accounts.extend(ctx.remaining_accounts.iter().cloned());
+    let cpi_accounts: Vec<AccountInfo<'info>> =
+        std::iter::once(ctx.accounts.cp_swap_program.to_account_info())
+            .chain(ctx.remaining_accounts.iter().cloned())
+            .collect();
     
     // Pass all accounts to invoke_signed
     invoke_signed(
