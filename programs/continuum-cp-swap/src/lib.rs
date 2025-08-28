@@ -38,17 +38,12 @@ pub mod continuum_cp_swap {
     }
 
     /// Execute the next order in the FIFO queue
-    pub fn execute_order(
-        ctx: Context<ExecuteOrder>,
-        expected_sequence: u64,
-    ) -> Result<()> {
+    pub fn execute_order(ctx: Context<ExecuteOrder>, expected_sequence: u64) -> Result<()> {
         instructions::execute_order(ctx, expected_sequence)
     }
 
     /// Cancel an order (only by original submitter)
-    pub fn cancel_order(
-        ctx: Context<CancelOrder>,
-    ) -> Result<()> {
+    pub fn cancel_order(ctx: Context<CancelOrder>) -> Result<()> {
         instructions::cancel_order(ctx)
     }
 
@@ -71,6 +66,51 @@ pub mod continuum_cp_swap {
         pool_id: Pubkey,
         pool_authority_bump: u8,
     ) -> Result<()> {
-        instructions::swap_immediate(ctx, amount_in, min_amount_out, is_base_input, pool_id, pool_authority_bump)
+        instructions::swap_immediate(
+            ctx,
+            amount_in,
+            min_amount_out,
+            is_base_input,
+            pool_id,
+            pool_authority_bump,
+        )
+    }
+
+    /// Deposit liquidity into a CP-Swap pool
+    pub fn deposit_lp(
+        ctx: Context<DepositLp>,
+        min_lp_amount: u64,
+        max_amount_0: u64,
+        max_amount_1: u64,
+        pool_id: Pubkey,
+        pool_authority_bump: u8,
+    ) -> Result<()> {
+        instructions::deposit_lp(
+            ctx,
+            min_lp_amount,
+            max_amount_0,
+            max_amount_1,
+            pool_id,
+            pool_authority_bump,
+        )
+    }
+
+    /// Withdraw liquidity from a CP-Swap pool
+    pub fn withdraw_lp(
+        ctx: Context<WithdrawLp>,
+        lp_amount: u64,
+        min_amount_0: u64,
+        min_amount_1: u64,
+        pool_id: Pubkey,
+        pool_authority_bump: u8,
+    ) -> Result<()> {
+        instructions::withdraw_lp(
+            ctx,
+            lp_amount,
+            min_amount_0,
+            min_amount_1,
+            pool_id,
+            pool_authority_bump,
+        )
     }
 }
