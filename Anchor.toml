@@ -1,20 +1,19 @@
 [toolchain]
-package_manager = "yarn"
 
 [features]
-resolution = true
+seeds = false
 skip-lint = false
 
 [programs.localnet]
-continuum_cp_swap = "A548C9LR926hnAWvYDjsXJddidhfzLf3bRb8dmYPgRKn"
+continuum_cp_swap = "EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3"
 raydium_cp_swap = "GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
-wallet = "~/.config/solana/id.json"
+cluster = "Devnet"
+wallet = "/home/ubuntu/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("7uLunyG2Gr1uVNAS32qS4pKn7KkioTRvmKwpYgJeK65m");
+declare_id!("EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3");
 
 pub mod errors;
 pub mod instructions;
@@ -58,8 +58,8 @@ pub mod continuum_cp_swap {
     }
 
     /// Immediate swap - submit and execute in one transaction
-    pub fn swap_immediate(
-        ctx: Context<SwapImmediate>,
+    pub fn swap_immediate<'info>(
+        ctx: Context<'_, '_, '_, 'info, SwapImmediate<'info>>,
         amount_in: u64,
         min_amount_out: u64,
         is_base_input: bool,
@@ -77,8 +77,8 @@ pub mod continuum_cp_swap {
     }
 
     /// Deposit liquidity into a CP-Swap pool
-    pub fn deposit_lp(
-        ctx: Context<DepositLp>,
+    pub fn deposit_lp<'info>(
+        ctx: Context<'_, '_, '_, 'info, DepositLp<'info>>,
         min_lp_amount: u64,
         max_amount_0: u64,
         max_amount_1: u64,
@@ -96,8 +96,8 @@ pub mod continuum_cp_swap {
     }
 
     /// Withdraw liquidity from a CP-Swap pool
-    pub fn withdraw_lp(
-        ctx: Context<WithdrawLp>,
+    pub fn withdraw_lp<'info>(
+        ctx: Context<'_, '_, '_, 'info, WithdrawLp<'info>>,
         lp_amount: u64,
         min_amount_0: u64,
         min_amount_1: u64,
