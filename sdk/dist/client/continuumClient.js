@@ -21,8 +21,8 @@ class ContinuumClient {
     /**
      * Initialize the Continuum FIFO state
      */
-    async initialize(admin) {
-        const ix = (0, instructions_1.createInitializeInstruction)(admin.publicKey);
+    async initialize(admin, relayerPubkey) {
+        const ix = (0, instructions_1.createInitializeInstruction)(admin.publicKey, relayerPubkey);
         const tx = new web3_js_1.Transaction().add(ix);
         return await this.sendTransaction(tx, [admin]);
     }
@@ -39,7 +39,8 @@ class ContinuumClient {
         return {
             currentSequence: new bn_js_1.default(data.slice(8, 16), 'le'),
             admin: new web3_js_1.PublicKey(data.slice(16, 48)),
-            emergencyPause: data[48] === 1,
+            relayerPubkey: new web3_js_1.PublicKey(data.slice(48, 80)),
+            emergencyPause: data[80] === 1,
         };
     }
     /**
@@ -61,8 +62,8 @@ class ContinuumClient {
      * Execute an order (for relayers)
      */
     async executeOrder(executor, params) {
-        const ix = (0, instructions_1.createExecuteOrderInstruction)(params);
-        const tx = new web3_js_1.Transaction().add(ix);
+        const instructions = (0, instructions_1.createExecuteOrderInstructionsWithSignature)(params, executor);
+        const tx = new web3_js_1.Transaction().add(...instructions);
         return await this.sendTransaction(tx, [executor]);
     }
     /**

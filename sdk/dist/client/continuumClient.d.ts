@@ -10,7 +10,7 @@ export declare class ContinuumClient {
     /**
      * Initialize the Continuum FIFO state
      */
-    initialize(admin: Keypair): Promise<TransactionSignature>;
+    initialize(admin: Keypair, relayerPubkey: PublicKey): Promise<TransactionSignature>;
     /**
      * Get the current FIFO state
      */

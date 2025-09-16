@@ -23,6 +23,7 @@ export interface OrderState {
 export interface FifoState {
   currentSequence: BN;
   admin: PublicKey;
+  relayerPubkey: PublicKey;
   emergencyPause: boolean;
 }
 

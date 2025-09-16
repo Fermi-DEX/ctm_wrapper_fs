@@ -1,7 +1,7 @@
-import { TransactionInstruction, PublicKey, SYSVAR_CLOCK_PUBKEY } from '@solana/web3.js';
+import { TransactionInstruction, PublicKey, SYSVAR_CLOCK_PUBKEY, SYSVAR_INSTRUCTIONS_PUBKEY, Keypair } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { CONTINUUM_PROGRAM_ID, CP_SWAP_PROGRAM_ID } from '../constants';
-import { getFifoStatePDA, getPoolRegistryPDA, getOrderPDA, getPoolAuthorityPDA } from '../utils/pda';
+import { getFifoStatePDA, getPoolRegistryPDA, getOrderPDA, getPoolAuthorityPDA, createEd25519Instruction } from '../utils';
 import BN from 'bn.js';
 
 export interface ExecuteOrderParams {
@@ -35,6 +35,7 @@ export function createExecuteOrderInstruction(
     { pubkey: CP_SWAP_PROGRAM_ID, isSigner: false, isWritable: false },
     { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
     { pubkey: SYSVAR_CLOCK_PUBKEY, isSigner: false, isWritable: false },
+    { pubkey: SYSVAR_INSTRUCTIONS_PUBKEY, isSigner: false, isWritable: false },
     // Add CP-Swap specific accounts
     ...cpSwapRemainingAccounts.map(pubkey => ({
       pubkey,
@@ -57,4 +58,23 @@ export function createExecuteOrderInstruction(
     programId: CONTINUUM_PROGRAM_ID,
     data,
   });
+}
+
+/**
+ * Create Ed25519 precompile instruction + execute order instruction
+ * for relayer signature verification
+ */
+export function createExecuteOrderInstructionsWithSignature(
+  params: ExecuteOrderParams,
+  relayerKeypair: Keypair
+): TransactionInstruction[] {
+  const { executor, sequence } = params;
+
+  // Create Ed25519 precompile instruction for relayer signature verification
+  const ed25519Ix = createEd25519Instruction(relayerKeypair, sequence, executor);
+
+  // Create execute order instruction
+  const executeOrderIx = createExecuteOrderInstruction(params);
+
+  return [ed25519Ix, executeOrderIx];
 }

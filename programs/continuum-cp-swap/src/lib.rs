@@ -13,8 +13,8 @@ pub mod continuum_cp_swap {
     use super::*;
 
     /// Initialize the global FIFO state
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        instructions::initialize(ctx)
+    pub fn initialize(ctx: Context<Initialize>, relayer_pubkey: Pubkey) -> Result<()> {
+        instructions::initialize(ctx, relayer_pubkey)
     }
 
     /// Initialize a CP-Swap pool with Continuum as custom authority

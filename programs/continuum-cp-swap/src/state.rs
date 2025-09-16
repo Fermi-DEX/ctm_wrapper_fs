@@ -4,11 +4,12 @@ use anchor_lang::prelude::*;
 pub struct FifoState {
     pub current_sequence: u64,
     pub admin: Pubkey,
+    pub relayer_pubkey: Pubkey,
     pub emergency_pause: bool,
 }
 
 impl FifoState {
-    pub const LEN: usize = 8 + 8 + 32 + 1;
+    pub const LEN: usize = 8 + 8 + 32 + 32 + 1;
 }
 
 #[account]

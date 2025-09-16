@@ -20,3 +20,5 @@ __exportStar(require("./submitOrder"), exports);
 __exportStar(require("./executeOrder"), exports);
 __exportStar(require("./cancelOrder"), exports);
 __exportStar(require("./swapImmediate"), exports);
+__exportStar(require("./depositLp"), exports);
+__exportStar(require("./withdrawLp"), exports);

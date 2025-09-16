@@ -1,4 +1,4 @@
-import { TransactionInstruction, PublicKey } from '@solana/web3.js';
+import { TransactionInstruction, PublicKey, Keypair } from '@solana/web3.js';
 import BN from 'bn.js';
 export interface ExecuteOrderParams {
     executor: PublicKey;
@@ -10,3 +10,8 @@ export interface ExecuteOrderParams {
     cpSwapRemainingAccounts: PublicKey[];
 }
 export declare function createExecuteOrderInstruction(params: ExecuteOrderParams): TransactionInstruction;
+/**
+ * Create Ed25519 precompile instruction + execute order instruction
+ * for relayer signature verification
+ */
+export declare function createExecuteOrderInstructionsWithSignature(params: ExecuteOrderParams, relayerKeypair: Keypair): TransactionInstruction[];

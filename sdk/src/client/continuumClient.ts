@@ -15,6 +15,7 @@ import {
   createInitializeInstruction,
   createSubmitOrderInstruction,
   createExecuteOrderInstruction,
+  createExecuteOrderInstructionsWithSignature,
   createCancelOrderInstruction,
   createInitializeCpSwapPoolInstruction,
   ExecuteOrderParams,
@@ -45,8 +46,8 @@ export class ContinuumClient {
   /**
    * Initialize the Continuum FIFO state
    */
-  async initialize(admin: Keypair): Promise<TransactionSignature> {
-    const ix = createInitializeInstruction(admin.publicKey);
+  async initialize(admin: Keypair, relayerPubkey: PublicKey): Promise<TransactionSignature> {
+    const ix = createInitializeInstruction(admin.publicKey, relayerPubkey);
     const tx = new Transaction().add(ix);
     return await this.sendTransaction(tx, [admin]);
   }
@@ -65,7 +66,8 @@ export class ContinuumClient {
     return {
       currentSequence: new BN(data.slice(8, 16), 'le'),
       admin: new PublicKey(data.slice(16, 48)),
-      emergencyPause: data[48] === 1,
+      relayerPubkey: new PublicKey(data.slice(48, 80)),
+      emergencyPause: data[80] === 1,
     };
   }
 
@@ -104,8 +106,8 @@ export class ContinuumClient {
     executor: Keypair,
     params: ExecuteOrderParams
   ): Promise<TransactionSignature> {
-    const ix = createExecuteOrderInstruction(params);
-    const tx = new Transaction().add(ix);
+    const instructions = createExecuteOrderInstructionsWithSignature(params, executor);
+    const tx = new Transaction().add(...instructions);
     return await this.sendTransaction(tx, [executor]);
   }
 

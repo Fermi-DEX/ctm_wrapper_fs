@@ -31,4 +31,19 @@ pub enum ContinuumError {
     
     #[msg("Invalid order status")]
     InvalidOrderStatus,
+
+    #[msg("Missing Ed25519 instruction")]
+    MissingEd25519Instruction,
+
+    #[msg("Invalid Ed25519 instruction")]
+    InvalidEd25519Instruction,
+
+    #[msg("Invalid Ed25519 instruction data")]
+    InvalidEd25519Data,
+
+    #[msg("Invalid relayer public key")]
+    InvalidRelayerPubkey,
+
+    #[msg("Invalid signature message")]
+    InvalidSignatureMessage,
 }

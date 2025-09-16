@@ -2,6 +2,8 @@ use anchor_lang::prelude::*;
 use anchor_lang::solana_program::{
     program::invoke_signed,
     instruction::{Instruction, AccountMeta},
+    sysvar::instructions::{self, load_current_index_checked, load_instruction_at_checked},
+    ed25519_program,
 };
 use anchor_spl::token::{Token, TokenAccount};
 use crate::state::*;
@@ -62,7 +64,12 @@ pub struct ExecuteOrder<'info> {
     
     pub token_program: Program<'info, Token>,
     pub clock: Sysvar<'info, Clock>,
-    
+
+    /// Instructions sysvar for Ed25519 verification
+    /// CHECK: This is the instructions sysvar account
+    #[account(address = instructions::ID)]
+    pub instructions_sysvar: UncheckedAccount<'info>,
+
     // Remaining accounts are passed through to CP-Swap swap instruction
 }
 
@@ -70,6 +77,14 @@ pub fn execute_order(
     ctx: Context<ExecuteOrder>,
     expected_sequence: u64,
 ) -> Result<()> {
+    // Verify relayer signature using Ed25519 precompile instruction
+    verify_relayer_signature(
+        &ctx.accounts.instructions_sysvar,
+        &ctx.accounts.fifo_state.relayer_pubkey,
+        expected_sequence,
+        ctx.accounts.executor.key(),
+    )?;
+
     let pool_authority_bump = ctx.bumps.pool_authority;
     let pool_id = ctx.accounts.order_state.pool_id;
     let sequence = ctx.accounts.order_state.sequence;
@@ -77,10 +92,10 @@ pub fn execute_order(
     let is_base_input = ctx.accounts.order_state.is_base_input;
     let amount_in = ctx.accounts.order_state.amount_in;
     let min_amount_out = ctx.accounts.order_state.min_amount_out;
-    
+
     // Log sequence information for debugging
-    msg!("Execute order - Expected sequence param: {}, Order sequence: {}, Current FIFO sequence: {}", 
-        expected_sequence, 
+    msg!("Execute order - Expected sequence param: {}, Order sequence: {}, Current FIFO sequence: {}",
+        expected_sequence,
         sequence,
         ctx.accounts.fifo_state.current_sequence
     );
@@ -164,6 +179,63 @@ pub fn execute_order(
     });
     
     msg!("Order {} executed successfully", sequence);
-    
+
+    Ok(())
+}
+
+/// Verify that the relayer has signed this execution with Ed25519 precompile
+fn verify_relayer_signature(
+    instructions_sysvar: &UncheckedAccount,
+    expected_relayer_pubkey: &Pubkey,
+    sequence: u64,
+    executor: Pubkey,
+) -> Result<()> {
+    // Get the current instruction index
+    let current_index = load_current_index_checked(&instructions_sysvar.to_account_info())?;
+
+    // Look for Ed25519 precompile instruction immediately before this instruction
+    if current_index == 0 {
+        return Err(ContinuumError::MissingEd25519Instruction.into());
+    }
+
+    // Load the previous instruction (should be Ed25519 verification)
+    let ed25519_instruction = load_instruction_at_checked(
+        (current_index - 1) as usize,
+        &instructions_sysvar.to_account_info()
+    ).map_err(|_| ContinuumError::MissingEd25519Instruction)?;
+
+    // Verify it's an Ed25519 instruction
+    if ed25519_instruction.program_id != ed25519_program::ID {
+        return Err(ContinuumError::InvalidEd25519Instruction.into());
+    }
+
+    // Parse Ed25519 instruction data
+    if ed25519_instruction.data.len() < 112 {
+        return Err(ContinuumError::InvalidEd25519Data.into());
+    }
+
+    // Extract signature (64 bytes), public key (32 bytes), and message
+    let signature = &ed25519_instruction.data[16..80]; // Skip signature offset data
+    let pubkey_bytes = &ed25519_instruction.data[80..112];
+
+    // Verify the public key matches the expected relayer
+    let relayer_pubkey_bytes = expected_relayer_pubkey.to_bytes();
+    if pubkey_bytes != relayer_pubkey_bytes {
+        return Err(ContinuumError::InvalidRelayerPubkey.into());
+    }
+
+    // Create the expected message: sequence + executor
+    let mut message = Vec::new();
+    message.extend_from_slice(&sequence.to_le_bytes());
+    message.extend_from_slice(&executor.to_bytes());
+
+    // Verify the message was signed
+    let expected_message = &ed25519_instruction.data[112..];
+    if expected_message != message {
+        return Err(ContinuumError::InvalidSignatureMessage.into());
+    }
+
+    msg!("Relayer signature verified for sequence {} by relayer {}", sequence, expected_relayer_pubkey);
+
     Ok(())
 }
