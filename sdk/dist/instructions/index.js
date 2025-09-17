@@ -16,6 +16,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./initialize"), exports);
 __exportStar(require("./initializeCpSwapPool"), exports);
+__exportStar(require("./initializeCpSwapPoolDirect"), exports);
 __exportStar(require("./submitOrder"), exports);
 __exportStar(require("./executeOrder"), exports);
 __exportStar(require("./cancelOrder"), exports);

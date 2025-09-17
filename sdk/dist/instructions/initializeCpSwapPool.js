@@ -14,7 +14,7 @@ function createInitializeCpSwapPoolInstruction(params) {
         { pubkey: poolRegistry, isSigner: false, isWritable: true },
         { pubkey: poolAuthority, isSigner: false, isWritable: false },
         { pubkey: admin, isSigner: true, isWritable: true },
-        { pubkey: poolState, isSigner: false, isWritable: false },
+        { pubkey: poolState, isSigner: true, isWritable: false }, // Pool state needs to be a signer (creator)
         { pubkey: constants_1.CP_SWAP_PROGRAM_ID, isSigner: false, isWritable: false },
         { pubkey: web3_js_1.SystemProgram.programId, isSigner: false, isWritable: false },
         // Add CP-Swap specific accounts

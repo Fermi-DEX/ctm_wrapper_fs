@@ -1,5 +1,6 @@
 export * from './initialize';
 export * from './initializeCpSwapPool';
+export * from './initializeCpSwapPoolDirect';
 export * from './submitOrder';
 export * from './executeOrder';
 export * from './cancelOrder';

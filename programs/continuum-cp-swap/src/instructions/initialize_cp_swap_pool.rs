@@ -74,21 +74,23 @@ pub fn initialize_cp_swap_pool(
     
     // Build account metas for CPI
     let mut account_metas = vec![];
-    
-    // Add all remaining accounts in the order expected by CP-Swap
+
+    // The first remaining account should be the creator (pool_authority PDA)
+    // It needs to be marked as a signer for the CPI
+    let mut is_first = true;
     for account in ctx.remaining_accounts.iter() {
-        account_metas.push(if account.is_writable {
-            if account.is_signer {
-                AccountMeta::new(account.key(), true)
-            } else {
-                AccountMeta::new(account.key(), false)
-            }
+        let is_signer = if is_first && account.key() == ctx.accounts.pool_authority.key() {
+            // Mark pool_authority as signer for the CPI
+            true
         } else {
-            if account.is_signer {
-                AccountMeta::new_readonly(account.key(), true)
-            } else {
-                AccountMeta::new_readonly(account.key(), false)
-            }
+            account.is_signer
+        };
+        is_first = false;
+
+        account_metas.push(if account.is_writable {
+            AccountMeta::new(account.key(), is_signer)
+        } else {
+            AccountMeta::new_readonly(account.key(), is_signer)
         });
     }
     

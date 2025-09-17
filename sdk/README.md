@@ -25,6 +25,83 @@ Continuum CP-Swap provides MEV (Maximum Extractable Value) protection for Raydiu
 - **Relayer Network**: Decentralized relayers execute orders in sequence
 - **Fair Pricing**: No front-running or sandwich attacks possible
 
+## Pool Initialization with CTM Authority
+
+### Creating a New Protected Pool
+
+To create a CP-Swap pool with CTM Wrapper authority for MEV protection:
+
+```typescript
+import {
+  createInitializeCpSwapPoolDirectInstruction,
+  getCpSwapPDAs
+} from '@continuum/cp-swap-sdk';
+import { createAssociatedTokenAccountInstruction } from '@solana/spl-token';
+import BN from 'bn.js';
+
+async function initializeProtectedPool() {
+  // 1. Define pool parameters
+  const ammConfigIndex = 0;
+  const indexBuffer = Buffer.allocUnsafe(2);
+  indexBuffer.writeUInt16BE(ammConfigIndex);
+
+  const [ammConfig] = PublicKey.findProgramAddressSync(
+    [Buffer.from('amm_config'), indexBuffer],
+    CP_SWAP_PROGRAM_ID
+  );
+
+  // 2. Get CP-Swap PDAs
+  const cpSwapPDAs = getCpSwapPDAs(tokenAMint, tokenBMint, ammConfig);
+
+  // 3. Create fee account (required by CP-Swap)
+  const feeOwner = new PublicKey('GsV1jugD8ftfWBYNykA9SLK2V4mQqUW2sLop8MAfjVRq');
+  const feeAccount = getAssociatedTokenAddressSync(cpSwapPDAs.sortedToken0, feeOwner);
+
+  // Ensure fee account exists
+  const feeAccountInfo = await connection.getAccountInfo(feeAccount);
+  if (!feeAccountInfo) {
+    const createFeeAccountTx = new Transaction().add(
+      createAssociatedTokenAccountInstruction(
+        wallet.publicKey,
+        feeAccount,
+        feeOwner,
+        cpSwapPDAs.sortedToken0
+      )
+    );
+    await sendAndConfirmTransaction(connection, createFeeAccountTx, [wallet]);
+  }
+
+  // 4. Initialize pool with CTM authority
+  const initPoolIx = createInitializeCpSwapPoolDirectInstruction({
+    creator: wallet.publicKey,
+    ammConfig,
+    token0Mint: tokenAMint,
+    token1Mint: tokenBMint,
+    initAmount0: new BN(100 * 10 ** 9), // 100 tokens with 9 decimals
+    initAmount1: new BN(100 * 10 ** 6), // 100 tokens with 6 decimals
+    openTime: new BN(0), // Pool opens immediately
+    feeOwner
+  });
+
+  const tx = new Transaction().add(initPoolIx);
+  const signature = await sendAndConfirmTransaction(connection, tx, [wallet]);
+
+  console.log('✅ Pool initialized with CTM Wrapper authority!');
+  console.log('Pool ID:', cpSwapPDAs.poolState.toBase58());
+  console.log('Transaction:', signature);
+
+  return cpSwapPDAs;
+}
+```
+
+### Important Notes for Pool Initialization
+
+- **Authority Type**: Set to `1` for custom authority
+- **Custom Authority**: Automatically set to CTM Wrapper's pool authority PDA
+- **Fee Account**: Must be initialized before pool creation
+- **Token Sorting**: Tokens are automatically sorted by their public key bytes
+- **AMM Config**: Must exist on-chain (index 0 is commonly used on devnet)
+
 ## Installation
 
 ```bash

@@ -1698,3 +1698,11 @@
 {"level":"info","message":"Relayer server listening on port 8082","timestamp":"2025-09-16T12:35:01.803Z"}
 {"level":"info","message":"WebSocket endpoint: ws://localhost:8082/ws","timestamp":"2025-09-16T12:35:01.804Z"}
 {"level":"info","message":"HTTP API endpoint: http://localhost:8082/api/v1","timestamp":"2025-09-16T12:35:01.804Z"}
+{"level":"info","message":"Shutting down relayer...","timestamp":"2025-09-16T13:03:01.675Z"}
+{"level":"info","message":"Starting Continuum relayer service...","timestamp":"2025-09-16T13:04:24.543Z"}
+{"level":"info","message":"Relayer address:","timestamp":"2025-09-16T13:04:24.545Z"}
+{"level":"info","message":"Relayer balance: 7.97729747 SOL","timestamp":"2025-09-16T13:04:25.028Z"}
+{"level":"info","message":"Relayer service started","timestamp":"2025-09-16T13:04:25.029Z"}
+{"level":"info","message":"Relayer server listening on port 8082","timestamp":"2025-09-16T13:04:25.031Z"}
+{"level":"info","message":"WebSocket endpoint: ws://localhost:8082/ws","timestamp":"2025-09-16T13:04:25.032Z"}
+{"level":"info","message":"HTTP API endpoint: http://localhost:8082/api/v1","timestamp":"2025-09-16T13:04:25.032Z"}
