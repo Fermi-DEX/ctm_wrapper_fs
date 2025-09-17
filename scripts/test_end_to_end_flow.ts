@@ -362,59 +362,9 @@ async function main() {
     const lpBalanceAfterInit = await connection.getTokenAccountBalance(userLpToken);
     console.log('LP tokens received from initialization:', lpBalanceAfterInit.value.uiAmount);
 
-    // === Phase 3: Register Pool with CTM Wrapper ===
-    console.log('\n=== Phase 3: Register Pool with CTM Wrapper ===');
-
-    // Register the pool with CTM wrapper (requires admin privileges)
-    const [poolRegistry] = getPoolRegistryPDA(cpSwapPDAs.poolState);
-    const [fifoStatePDA] = getFifoStatePDA();
-
-    // Check if already registered
-    const registryAccount = await connection.getAccountInfo(poolRegistry);
-    if (!registryAccount) {
-      console.log('Registering pool with CTM Wrapper...');
-
-      // Create registration instruction
-      // Using the initialize_cp_swap_pool instruction with dummy values since pool already exists
-      const registerDiscriminator = Buffer.from([82, 124, 68, 116, 214, 40, 134, 198]); // initialize_cp_swap_pool
-      const registerData = Buffer.concat([
-        registerDiscriminator,
-        new BN(0).toArrayLike(Buffer, 'le', 8), // dummy init_amount_0
-        new BN(0).toArrayLike(Buffer, 'le', 8), // dummy init_amount_1
-        new BN(0).toArrayLike(Buffer, 'le', 8), // dummy open_time
-      ]);
-
-      const registerAccounts = [
-        { pubkey: fifoStatePDA, isSigner: false, isWritable: false },
-        { pubkey: poolRegistry, isSigner: false, isWritable: true },
-        { pubkey: continuumPoolAuthority, isSigner: false, isWritable: false },
-        { pubkey: userKeypair.publicKey, isSigner: true, isWritable: true }, // admin
-        { pubkey: cpSwapPDAs.poolState, isSigner: false, isWritable: false },
-        { pubkey: CP_SWAP_PROGRAM_ID, isSigner: false, isWritable: false },
-        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
-      ];
-
-      const registerIx = new TransactionInstruction({
-        keys: registerAccounts,
-        programId: CONTINUUM_PROGRAM_ID,
-        data: registerData,
-      });
-
-      const registerTx = new Transaction().add(registerIx);
-
-      try {
-        const registerSig = await sendAndConfirmTransaction(connection, registerTx, [userKeypair]);
-        console.log('✅ Pool registered with CTM Wrapper! Signature:', registerSig);
-      } catch (error: any) {
-        console.log('Warning: Could not register pool. Error:', error.message);
-        if (error.logs) {
-          console.log('Logs:', error.logs);
-        }
-        console.log('Continuing with test...');
-      }
-    } else {
-      console.log('✅ Pool already registered with CTM Wrapper');
-    }
+    // === Phase 3: Pool Registration (Skipped) ===
+    console.log('\n=== Phase 3: Pool Registration (Skipped) ===');
+    console.log('Pool was initialized with CTM authority - no separate registration needed');
 
     // === Phase 4: Additional LP Deposit (Skipped) ===
     console.log('\n=== Phase 4: Additional LP Deposit (Skipped) ===');

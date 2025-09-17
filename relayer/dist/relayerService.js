@@ -16,6 +16,8 @@ class RelayerService extends events_1.EventEmitter {
         this.logger = logger;
         this.orders = new Map();
         this.executionQueue = [];
+        this.skippedQueue = [];
+        this.nextSequence = new anchor_1.BN(1);
         this.isRunning = false;
         this.stats = {
             totalOrders: 0,
@@ -38,7 +40,7 @@ class RelayerService extends events_1.EventEmitter {
         const orderId = `ord_${Date.now()}_${Math.random()
             .toString(36)
             .substr(2, 9)}`;
-        const sequence = new anchor_1.BN(this.stats.totalOrders + 1);
+        const sequence = this.nextSequence;
         // Log incoming transaction details
         if (params.transaction) {
             const tx = params.transaction;
@@ -124,7 +126,7 @@ class RelayerService extends events_1.EventEmitter {
         const orderId = `ord_${Date.now()}_${Math.random()
             .toString(36)
             .substr(2, 9)}`;
-        const sequence = new anchor_1.BN(this.stats.totalOrders + 1);
+        const sequence = this.nextSequence;
         // Convert string parameters to required types
         const poolId = new web3_js_1.PublicKey(params.poolId);
         const userPublicKey = new web3_js_1.PublicKey(params.userPublicKey);
@@ -285,6 +287,11 @@ class RelayerService extends events_1.EventEmitter {
     getTotalOrders() {
         return this.stats.totalOrders;
     }
+    getSkippedTransactions() {
+        return this.skippedQueue
+            .map((id) => this.orders.get(id))
+            .filter((o) => o !== undefined);
+    }
     async getStatistics() {
         return {
             totalOrders: this.stats.totalOrders,
@@ -305,6 +312,21 @@ class RelayerService extends events_1.EventEmitter {
             // Wait before next check
             await new Promise((resolve) => setTimeout(resolve, 1000));
         }
+    }
+    requeuePendingOrders(fromOrderId) {
+        const pendingOrders = Array.from(this.orders.values())
+            .filter((o) => o.status === "pending" || o.orderId === fromOrderId)
+            .sort((a, b) => new anchor_1.BN(a.sequence).cmp(new anchor_1.BN(b.sequence)))
+            .map((o) => o.orderId);
+        const uniqueExisting = new Set(pendingOrders);
+        this.executionQueue = [
+            ...pendingOrders,
+            ...this.executionQueue.filter((id) => !uniqueExisting.has(id)),
+        ];
+        this.logger.info("Requeued pending orders", {
+            fromOrderId,
+            requeuedOrderIds: pendingOrders,
+        });
     }
     async executeOrder(orderId) {
         const order = this.orders.get(orderId);
@@ -488,6 +510,17 @@ class RelayerService extends events_1.EventEmitter {
                         providedSignatures,
                         isFullySigned: providedSignatures >= requiredSignatures,
                     });
+                    const simulation = await this.connection.simulateTransaction(transaction);
+                    if (simulation.value.err) {
+                        this.logger.error("Transaction simulation failed", {
+                            orderId,
+                            error: JSON.stringify(simulation.value.err),
+                        });
+                        order.status = "skipped";
+                        order.simulationError = JSON.stringify(simulation.value.err);
+                        this.skippedQueue.push(orderId);
+                        return;
+                    }
                     signature = await this.connection.sendTransaction(transaction, {
                         skipPreflight: false,
                         preflightCommitment: "confirmed",
@@ -512,6 +545,17 @@ class RelayerService extends events_1.EventEmitter {
                         providedSigners,
                         missingSigners: Array.from(requiredSigners).filter((s) => !providedSigners.includes(s)),
                     });
+                    const simulation = await this.connection.simulateTransaction(transaction);
+                    if (simulation.value.err) {
+                        this.logger.error("Transaction simulation failed", {
+                            orderId,
+                            error: JSON.stringify(simulation.value.err),
+                        });
+                        order.status = "skipped";
+                        order.simulationError = JSON.stringify(simulation.value.err);
+                        this.skippedQueue.push(orderId);
+                        return;
+                    }
                     signature = await this.connection.sendRawTransaction(transaction.serialize(), {
                         skipPreflight: false,
                         preflightCommitment: "confirmed",
@@ -597,11 +641,13 @@ class RelayerService extends events_1.EventEmitter {
                 executionPrice: order.executionPrice,
                 actualAmountOut: order.actualAmountOut,
             });
+            this.nextSequence = this.nextSequence.add(new anchor_1.BN(1));
         }
         catch (error) {
             order.status = "failed";
             order.error = error instanceof Error ? error.message : String(error);
             this.stats.failedOrders++;
+            this.requeuePendingOrders(orderId);
             // Check if this is a "transaction already processed" error
             const errorMessage = error instanceof Error ? error.message : String(error);
             const isAlreadyProcessed = errorMessage.includes("This transaction has already been processed") ||

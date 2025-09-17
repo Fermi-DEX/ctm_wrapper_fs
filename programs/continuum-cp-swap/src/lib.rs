@@ -27,6 +27,15 @@ pub mod continuum_cp_swap {
         instructions::initialize_cp_swap_pool(ctx, init_amount_0, init_amount_1, open_time)
     }
 
+    /// Register an existing CP-Swap pool that has Continuum as custom authority
+    pub fn register_pool(
+        ctx: Context<RegisterPool>,
+        token_0: Pubkey,
+        token_1: Pubkey,
+    ) -> Result<()> {
+        instructions::register_pool(ctx, token_0, token_1)
+    }
+
     /// Submit a swap order to the FIFO queue
     pub fn submit_order(
         ctx: Context<SubmitOrder>,
