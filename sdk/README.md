@@ -819,9 +819,9 @@ We provide three end-to-end helper scripts under `sdk/examples` that orchestrate
    npx ts-node sdk/examples/devnet-lp-operations.ts
    ```
 
-   Uses the SDK builders (`createDepositLpInstruction` / `createWithdrawLpInstruction`) to send liquidity through the CTM wrapper and then withdraw half of the received LP tokens, printing post-operation balances for verification.
+   Prefunds the CTM wrapper's pool-authority token accounts, computes the proportional LP to mint, submits the deposit through `createDepositLpInstruction`, and finally withdraws the newly minted LP position back into the CTM custody account for inspection. The script prints both Continuum-controlled and user balances after each step so you can verify the round trip.
 
-All scripts default to the keypair located at `~/.config/solana/id.json`; set `KEYPAIR=/path/to/keypair.json` to override. They assume the CTM FIFO state has been initialised on devnet.
+All scripts default to the keypair located at `~/.config/solana/id.json`; set `KEYPAIR=/path/to/keypair.json` to override. They assume the CTM FIFO state has been initialised on devnet. When running behind certain proxies you may need to prefix commands with `NODE_OPTIONS=--dns-result-order=ipv4first` so that `ts-node` resolves the RPC endpoint correctly.
 
 ### 2. Price Feed Integration
 

@@ -1,20 +1,13 @@
 #!/usr/bin/env ts-node
 
 import {
-  Connection,
   Keypair,
   PublicKey,
   SystemProgram,
   Transaction,
   TransactionInstruction,
-  sendAndConfirmTransaction,
 } from '@solana/web3.js';
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-  createAssociatedTokenAccountInstruction,
-  getAssociatedTokenAddress,
-} from '@solana/spl-token';
+import { getAssociatedTokenAddress } from '@solana/spl-token';
 import BN from 'bn.js';
 import fs from 'fs';
 import path from 'path';
@@ -25,14 +18,19 @@ import {
   createInitializeCpSwapPoolDirectInstruction,
   getCpSwapPDAs,
 } from '../src/instructions/initializeCpSwapPoolDirect';
+import {
+  createHttpConnection,
+  ensureAta,
+  loadOrGenerateKeypair,
+  sendTransactionWithRetry,
+} from './utils';
 
 const DEVNET_RPC = process.env.RPC_URL ?? 'https://api.devnet.solana.com';
 const DEFAULT_KEYPAIR_PATH = path.join(process.env.HOME ?? '.', '.config/solana/id.json');
 const TOKENS_PATH = path.join(__dirname, '../../config/devnet-tokens.json');
 const OUTPUT_PATH = path.join(__dirname, '../../config/devnet-pool.json');
 
-const DEFAULT_FEE_OWNER = new PublicKey('GsV1jugD8ftfWBYNykA9SLK2V4mQqUW2sLop8MAfjVRq');
-const AMM_CONFIG_INDEX = Number(process.env.AMM_CONFIG_INDEX ?? 42);
+const AMM_CONFIG_INDEX = Number(process.env.AMM_CONFIG_INDEX ?? 0);
 const TRADE_FEE_BPS = Number(process.env.TRADE_FEE_BPS ?? 2500);
 const PROTOCOL_FEE_BPS = Number(process.env.PROTOCOL_FEE_BPS ?? 0);
 const FUND_FEE_BPS = Number(process.env.FUND_FEE_BPS ?? 0);
@@ -45,9 +43,22 @@ interface TokenConfigFile {
   tokenB: { mint: string; decimals: number; symbol: string; account: string };
 }
 
+function findTokenDecimals(tokens: TokenConfigFile, mint: PublicKey): number {
+  if (tokens.tokenA.mint === mint.toBase58()) {
+    return tokens.tokenA.decimals;
+  }
+  if (tokens.tokenB.mint === mint.toBase58()) {
+    return tokens.tokenB.decimals;
+  }
+  throw new Error(`Unable to determine decimals for mint ${mint.toBase58()}`);
+}
+
+function amountWithDecimals(amount: number, decimals: number): BN {
+  return new BN(amount).mul(new BN(10).pow(new BN(decimals)));
+}
+
 function deriveAmmConfigPda(index: number): [PublicKey, number] {
-  const indexBuffer = Buffer.alloc(2);
-  indexBuffer.writeUInt16LE(index);
+  const indexBuffer = new BN(index).toArrayLike(Buffer, 'be', 2);
   return PublicKey.findProgramAddressSync(
     [Buffer.from('amm_config'), indexBuffer],
     CP_SWAP_PROGRAM_ID,
@@ -55,13 +66,14 @@ function deriveAmmConfigPda(index: number): [PublicKey, number] {
 }
 
 function createAmmConfigInstruction(owner: PublicKey, ammConfig: PublicKey): TransactionInstruction {
+  const discriminator = Buffer.from([137, 52, 237, 212, 215, 117, 108, 104]);
   const data = Buffer.concat([
-    Buffer.from([72, 186, 156, 243, 103, 195, 75, 79]),
-    Buffer.from([AMM_CONFIG_INDEX & 0xff]),
-    new BN(TICK_SPACING).toArrayLike(Buffer, 'le', 2),
-    new BN(TRADE_FEE_BPS).toArrayLike(Buffer, 'le', 4),
-    new BN(PROTOCOL_FEE_BPS).toArrayLike(Buffer, 'le', 4),
-    new BN(FUND_FEE_BPS).toArrayLike(Buffer, 'le', 4),
+    discriminator,
+    new BN(AMM_CONFIG_INDEX).toArrayLike(Buffer, 'le', 2),
+    new BN(TRADE_FEE_BPS).toArrayLike(Buffer, 'le', 8),
+    new BN(PROTOCOL_FEE_BPS).toArrayLike(Buffer, 'le', 8),
+    new BN(FUND_FEE_BPS).toArrayLike(Buffer, 'le', 8),
+    new BN(0).toArrayLike(Buffer, 'le', 8),
   ]);
 
   return new TransactionInstruction({
@@ -75,46 +87,23 @@ function createAmmConfigInstruction(owner: PublicKey, ammConfig: PublicKey): Tra
   });
 }
 
-async function ensureAta(
-  connection: Connection,
-  payer: Keypair,
-  owner: PublicKey,
-  mint: PublicKey,
-): Promise<PublicKey> {
-  const ata = await getAssociatedTokenAddress(mint, owner);
-  const info = await connection.getAccountInfo(ata);
-  if (!info) {
-    const createIx = createAssociatedTokenAccountInstruction(
-      payer.publicKey,
-      ata,
-      owner,
-      mint,
-      TOKEN_PROGRAM_ID,
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-    );
-    const tx = new Transaction().add(createIx);
-    await sendAndConfirmTransaction(connection, tx, [payer]);
-    console.log(`   → Created ATA ${ata.toBase58()}`);
-  }
-  return ata;
-}
-
 async function main() {
   if (!fs.existsSync(TOKENS_PATH)) {
     throw new Error('Token configuration not found. Run devnet-create-mints.ts first.');
   }
 
   const keypairPath = process.env.KEYPAIR ?? DEFAULT_KEYPAIR_PATH;
-  const secret = JSON.parse(fs.readFileSync(keypairPath, 'utf8')) as number[];
-  const payer = Keypair.fromSecretKey(new Uint8Array(secret));
+  const payer = loadOrGenerateKeypair(keypairPath);
 
-  const connection = new Connection(DEVNET_RPC, 'confirmed');
+  const connection = createHttpConnection(DEVNET_RPC, 'confirmed');
   console.log('🌐 RPC Endpoint:', DEVNET_RPC);
   console.log('🔑 Payer:', payer.publicKey.toBase58());
 
   const tokens = JSON.parse(fs.readFileSync(TOKENS_PATH, 'utf8')) as TokenConfigFile;
   const mintA = new PublicKey(tokens.tokenA.mint);
   const mintB = new PublicKey(tokens.tokenB.mint);
+
+  const feeOwner = process.env.FEE_OWNER ? new PublicKey(process.env.FEE_OWNER) : payer.publicKey;
 
   const [ammConfig] = deriveAmmConfigPda(AMM_CONFIG_INDEX);
   console.log('⚙️  AMM Config PDA:', ammConfig.toBase58());
@@ -124,7 +113,7 @@ async function main() {
     console.log('🛠️  Creating AMM config...');
     const configIx = createAmmConfigInstruction(payer.publicKey, ammConfig);
     const configTx = new Transaction().add(configIx);
-    const sig = await sendAndConfirmTransaction(connection, configTx, [payer]);
+    const sig = await sendTransactionWithRetry(connection, configTx, [payer]);
     console.log('   → Config transaction:', sig);
   } else {
     console.log('✅ AMM config already exists');
@@ -141,35 +130,32 @@ async function main() {
   console.log('   Observation:', cpSwapPdas.observationState.toBase58());
   console.log('   Continuum authority:', poolAuthority.toBase58(), `(bump ${poolAuthorityBump})`);
 
+  const token0MintInfo = await connection.getAccountInfo(cpSwapPdas.sortedToken0);
+  const token1MintInfo = await connection.getAccountInfo(cpSwapPdas.sortedToken1);
+  console.log('   Token0 mint owner :', token0MintInfo?.owner.toBase58());
+  console.log('   Token1 mint owner :', token1MintInfo?.owner.toBase58());
+
   const creatorToken0 = await ensureAta(connection, payer, payer.publicKey, cpSwapPdas.sortedToken0);
   const creatorToken1 = await ensureAta(connection, payer, payer.publicKey, cpSwapPdas.sortedToken1);
-  const creatorLp = await ensureAta(connection, payer, payer.publicKey, cpSwapPdas.lpMint);
+  const creatorLp = await getAssociatedTokenAddress(cpSwapPdas.lpMint, payer.publicKey);
   console.log('   Creator token0 ATA:', creatorToken0.toBase58());
   console.log('   Creator token1 ATA:', creatorToken1.toBase58());
   console.log('   Creator LP ATA   :', creatorLp.toBase58());
+  console.log('   Fee owner        :', feeOwner.toBase58());
 
-  const feeAccount = await getAssociatedTokenAddress(cpSwapPdas.sortedToken0, DEFAULT_FEE_OWNER);
-  const feeAccountInfo = await connection.getAccountInfo(feeAccount);
-  const preInstructions: Transaction[] = [];
-  if (!feeAccountInfo) {
-    const createFeeIx = createAssociatedTokenAccountInstruction(
-      payer.publicKey,
-      feeAccount,
-      DEFAULT_FEE_OWNER,
-      cpSwapPdas.sortedToken0,
-      TOKEN_PROGRAM_ID,
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-    );
-    preInstructions.push(new Transaction().add(createFeeIx));
-    console.log('   → Fee account will be created for', DEFAULT_FEE_OWNER.toBase58());
-  }
+  const feeAtaAddress = await getAssociatedTokenAddress(cpSwapPdas.sortedToken0, feeOwner);
+  const feeAtaInfo = await connection.getAccountInfo(feeAtaAddress, 'confirmed');
+  console.log('   Fee ATA exists?   :', !!feeAtaInfo);
+  const feeAccount = feeAtaInfo
+    ? feeAtaAddress
+    : await ensureAta(connection, payer, feeOwner, cpSwapPdas.sortedToken0);
+  console.log('   Fee owner token0 ATA:', feeAccount.toBase58());
+  console.log('   Fee ATA address  :', feeAtaAddress.toBase58());
 
-  for (const tx of preInstructions) {
-    await sendAndConfirmTransaction(connection, tx, [payer]);
-  }
-
-  const initAmount0 = new BN(100_000 * 10 ** tokens.tokenA.decimals);
-  const initAmount1 = new BN(100_000 * 10 ** tokens.tokenB.decimals);
+  const decimals0 = findTokenDecimals(tokens, cpSwapPdas.sortedToken0);
+  const decimals1 = findTokenDecimals(tokens, cpSwapPdas.sortedToken1);
+  const initAmount0 = amountWithDecimals(100, decimals0);
+  const initAmount1 = amountWithDecimals(100, decimals1);
   const openTime = new BN(Math.floor(Date.now() / 1000));
 
   const initIx = createInitializeCpSwapPoolDirectInstruction({
@@ -180,11 +166,11 @@ async function main() {
     initAmount0,
     initAmount1,
     openTime,
-    feeOwner: DEFAULT_FEE_OWNER,
+    feeOwner,
   });
 
   const tx = new Transaction().add(initIx);
-  const signature = await sendAndConfirmTransaction(connection, tx, [payer]);
+  const signature = await sendTransactionWithRetry(connection, tx, [payer]);
   console.log('\n✅ Pool initialized! Signature:', signature);
 
   const payload = {

@@ -5,20 +5,26 @@ import {
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
+  SystemProgram,
   Transaction,
-  sendAndConfirmTransaction,
 } from '@solana/web3.js';
 import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
-  createAssociatedTokenAccountInstruction,
-  createMint,
+  MINT_SIZE,
+  createInitializeMint2Instruction,
+  createMintToInstruction,
   getAccount,
-  getAssociatedTokenAddress,
-  mintTo,
+  getMinimumBalanceForRentExemptMint,
 } from '@solana/spl-token';
 import fs from 'fs';
 import path from 'path';
+import {
+  confirmSignature,
+  createHttpConnection,
+  ensureAta,
+  loadOrGenerateKeypair,
+  sendTransactionWithRetry,
+} from './utils';
 
 const DEVNET_RPC = process.env.RPC_URL ?? 'https://api.devnet.solana.com';
 const DEFAULT_KEYPAIR_PATH = path.join(process.env.HOME ?? '.', '.config/solana/id.json');
@@ -41,52 +47,72 @@ interface TokenConfigFile {
 }
 
 async function airdropIfNeeded(connection: Connection, wallet: PublicKey, minimumLamports: number) {
-  const current = await connection.getBalance(wallet);
+  const current = await connection.getBalance(wallet, 'confirmed');
   if (current >= minimumLamports) {
     return;
   }
 
   try {
-    const sig = await connection.requestAirdrop(wallet, Math.max(minimumLamports - current, 1 * LAMPORTS_PER_SOL));
-    await connection.confirmTransaction(sig, 'confirmed');
+    const amount = Math.max(minimumLamports - current, 1 * LAMPORTS_PER_SOL);
+    const sig = await connection.requestAirdrop(wallet, amount);
+    await confirmSignature(connection, sig);
     console.log(`💧 Airdropped SOL to ${wallet.toBase58()}`);
   } catch (err) {
     console.warn('⚠️  Unable to request airdrop:', err);
   }
 }
 
-async function createMintIfNeeded(
+async function createMintAndSeed(
   connection: Connection,
   payer: Keypair,
   decimals: number,
   symbol: string,
-  initialAmount: bigint,
+  initialAmount: number,
 ): Promise<TokenInfo> {
-  const mint = await createMint(connection, payer, payer.publicKey, payer.publicKey, decimals, undefined, undefined, TOKEN_PROGRAM_ID);
-  console.log(`✅ Created ${symbol} mint: ${mint.toBase58()}`);
+  const mintKeypair = Keypair.generate();
+  const rent = await getMinimumBalanceForRentExemptMint(connection, 'confirmed');
 
-  const ata = await getAssociatedTokenAddress(mint, payer.publicKey);
-  const ataInfo = await connection.getAccountInfo(ata);
-  if (!ataInfo) {
-    const createAtaIx = createAssociatedTokenAccountInstruction(
+  const createMintTx = new Transaction().add(
+    SystemProgram.createAccount({
+      fromPubkey: payer.publicKey,
+      newAccountPubkey: mintKeypair.publicKey,
+      space: MINT_SIZE,
+      lamports: rent,
+      programId: TOKEN_PROGRAM_ID,
+    }),
+    createInitializeMint2Instruction(
+      mintKeypair.publicKey,
+      decimals,
       payer.publicKey,
+      payer.publicKey,
+      TOKEN_PROGRAM_ID,
+    ),
+  );
+
+  const createMintSig = await sendTransactionWithRetry(connection, createMintTx, [payer, mintKeypair]);
+  console.log(`✅ Created ${symbol} mint: ${mintKeypair.publicKey.toBase58()} (${createMintSig})`);
+
+  const ata = await ensureAta(connection, payer, payer.publicKey, mintKeypair.publicKey);
+
+  const mintTx = new Transaction().add(
+    createMintToInstruction(
+      mintKeypair.publicKey,
       ata,
       payer.publicKey,
-      mint,
+      initialAmount,
+      [],
       TOKEN_PROGRAM_ID,
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-    );
-    const createAtaTx = new Transaction().add(createAtaIx);
-    const createAtaSig = await sendAndConfirmTransaction(connection, createAtaTx, [payer]);
-    console.log(`   → Created ATA (${symbol}): ${ata.toBase58()} (${createAtaSig})`);
-  }
+    ),
+  );
+  const mintSig = await sendTransactionWithRetry(connection, mintTx, [payer]);
+  console.log(
+    `   → Minted ${(initialAmount / 10 ** decimals).toLocaleString()} ${symbol} (${mintSig})`,
+  );
 
-  await mintTo(connection, payer, mint, ata, payer.publicKey, Number(initialAmount));
-  const accountInfo = await getAccount(connection, ata);
-  console.log(`   → Minted ${(Number(accountInfo.amount) / 10 ** decimals).toLocaleString()} ${symbol}`);
+  const accountInfo = await getAccount(connection, ata, 'confirmed');
 
   return {
-    mint: mint.toBase58(),
+    mint: mintKeypair.publicKey.toBase58(),
     decimals,
     account: ata.toBase58(),
     amount: accountInfo.amount.toString(),
@@ -96,21 +122,16 @@ async function createMintIfNeeded(
 
 async function main() {
   const keypairPath = process.env.KEYPAIR ?? DEFAULT_KEYPAIR_PATH;
-  if (!fs.existsSync(keypairPath)) {
-    throw new Error(`Keypair file not found at ${keypairPath}`);
-  }
+  const payer = loadOrGenerateKeypair(keypairPath);
 
-  const secret = JSON.parse(fs.readFileSync(keypairPath, 'utf8')) as number[];
-  const payer = Keypair.fromSecretKey(new Uint8Array(secret));
-
-  const connection = new Connection(DEVNET_RPC, 'confirmed');
+  const connection = createHttpConnection(DEVNET_RPC, 'confirmed');
   console.log('🌐 RPC Endpoint:', DEVNET_RPC);
   console.log('🔑 Payer:', payer.publicKey.toBase58());
 
   await airdropIfNeeded(connection, payer.publicKey, 2 * LAMPORTS_PER_SOL);
 
-  const tokenA = await createMintIfNeeded(connection, payer, 6, 'TOKENA', 1_000_000n * 1_000_000n);
-  const tokenB = await createMintIfNeeded(connection, payer, 9, 'TOKENB', 1_000n * 1_000_000_000n);
+  const tokenA = await createMintAndSeed(connection, payer, 6, 'TOKENA', 1_000_000 * 1_000_000);
+  const tokenB = await createMintAndSeed(connection, payer, 9, 'TOKENB', 1_000 * 1_000_000_000);
 
   const payload: TokenConfigFile = {
     network: 'devnet',
