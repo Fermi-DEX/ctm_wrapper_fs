@@ -1,0 +1,20 @@
+{
+  "network": "devnet",
+  "createdAt": "2025-09-20T09:26:35.839Z",
+  "creator": "BpEz2agzXJFb2mr3WrVR45Hga88c6G2L7YJAbbyXdanb",
+  "poolId": "9uRP7dQoqaQ8k6ACu2nNUFz3QajQujM8J7ohXaWCn7wi",
+  "ammConfig": "5XoBUe5w3xSjRMgaPSwyA2ujH7eBBH5nD5L9H2ws841B",
+  "token0Mint": "7w9zFL3fT2LNogZHrbpq2h2KvUGZAh37iyuuhH8bJRtf",
+  "token1Mint": "F6pomBd1E4au6cZunLLFbL2bzu5o6gfpuptsaWoqywnL",
+  "token0Vault": "2tKWJmLMejqUy7KP8ug4G4wAhGEwsJSacuqUJuBejU1f",
+  "token1Vault": "Attzzn7qoQbj9668P7Lb6Abvf4cAX1tjn2c5iMZ7zYrq",
+  "lpMint": "8dNsEPQPhfNGVYjhTCBuES351nHyX9MYVSkyxcngShHF",
+  "observationState": "CjjadAjL7jibDFWtvKPF3pzrR52oPsQbtj91s7BQEqRb",
+  "continuumAuthority": "8HG3PQBKTxZe8m9ysZqzk54wEjVKA7swhK2qYf76csvR",
+  "continuumAuthorityBump": 254,
+  "cpSwapAuthority": "EwXTC3iX6iKHtXMfZkmWt4yDgB6aWCrczvRtfKWVoouu",
+  "initAmount0": "100000000000",
+  "initAmount1": "100000000",
+  "cpSwapProgram": "GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp",
+  "continuumProgram": "EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3"
+}
