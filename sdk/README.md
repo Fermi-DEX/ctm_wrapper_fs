@@ -793,6 +793,36 @@ async function performSwap() {
 }
 ```
 
+### 3. Devnet Helper Scripts
+
+We provide three end-to-end helper scripts under `sdk/examples` that orchestrate the full devnet flow with the deployed Continuum (`EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3`) and Raydium CP-Swap (`GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp`) programs:
+
+1. **Create fresh devnet mints**
+
+   ```bash
+   npx ts-node sdk/examples/devnet-create-mints.ts
+   ```
+
+   Creates two SPL token mints, mints an initial supply to your wallet, and writes the result to `config/devnet-tokens.json` for subsequent steps.
+
+2. **Initialise a protected CP-Swap pool**
+
+   ```bash
+   npx ts-node sdk/examples/devnet-init-pool.ts
+   ```
+
+   Derives a new AMM config (creating it if necessary), sets the CTM wrapper PDA as custom authority, and deploys a Raydium pool using the freshly minted tokens. The pool configuration is saved to `config/devnet-pool.json`.
+
+3. **Deposit and withdraw liquidity through CTM**
+
+   ```bash
+   npx ts-node sdk/examples/devnet-lp-operations.ts
+   ```
+
+   Uses the SDK builders (`createDepositLpInstruction` / `createWithdrawLpInstruction`) to send liquidity through the CTM wrapper and then withdraw half of the received LP tokens, printing post-operation balances for verification.
+
+All scripts default to the keypair located at `~/.config/solana/id.json`; set `KEYPAIR=/path/to/keypair.json` to override. They assume the CTM FIFO state has been initialised on devnet.
+
 ### 2. Price Feed Integration
 
 ```typescript
