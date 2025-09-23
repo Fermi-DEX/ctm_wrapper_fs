@@ -28,7 +28,7 @@ import fs from 'fs';
 
 // Your custom CP-Swap program ID
 const CP_SWAP_PROGRAM_ID = new PublicKey('GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp');
-const CONTINUUM_PROGRAM_ID = new PublicKey('EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3');
+const CONTINUUM_PROGRAM_ID = new PublicKey('7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE');
 
 // CP-Swap PDAs
 function getCpSwapPDAs(token0: PublicKey, token1: PublicKey, ammConfig: PublicKey) {

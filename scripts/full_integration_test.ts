@@ -35,7 +35,7 @@ import {
 import BN from 'bn.js';
 import fs from 'fs';
 
-const CONTINUUM_PROGRAM_ID = new PublicKey('EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3');
+const CONTINUUM_PROGRAM_ID = new PublicKey('7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE');
 const CP_SWAP_PROGRAM_ID = new PublicKey('GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp');
 
 async function airdropIfNeeded(connection: Connection, pubkey: PublicKey, minBalance: number) {

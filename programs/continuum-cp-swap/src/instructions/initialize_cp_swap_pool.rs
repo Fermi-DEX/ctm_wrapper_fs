@@ -68,9 +68,13 @@ pub fn initialize_cp_swap_pool(
     ix_data.extend_from_slice(&init_amount_0.to_le_bytes());
     ix_data.extend_from_slice(&init_amount_1.to_le_bytes());
     ix_data.extend_from_slice(&open_time.to_le_bytes());
-    ix_data.push(1); // authority_type = 1 (custom)
-    ix_data.push(1); // Option<Pubkey> is Some
-    ix_data.extend_from_slice(&ctx.accounts.pool_authority.key().to_bytes());
+
+
+    //  ! Issue
+
+    ix_data.push(0); // authority_type = 1 (custom)
+    ix_data.push(0); // Option<Pubkey> is Some
+    // ix_data.extend_from_slice(&ctx.accounts.pool_authority.key().to_bytes());
     
     // Build account metas for CPI
     let mut account_metas = vec![];

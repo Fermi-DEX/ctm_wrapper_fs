@@ -10,7 +10,7 @@ import { createEd25519Instruction } from '../sdk/src/utils/ed25519';
 import BN from 'bn.js';
 import fs from 'fs';
 
-const CONTINUUM_PROGRAM_ID = new PublicKey('EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3');
+const CONTINUUM_PROGRAM_ID = new PublicKey('7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE');
 
 async function main() {
   console.log('=== Ed25519 Signature Verification Test ===\n');

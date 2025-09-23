@@ -22,7 +22,7 @@ The CTM Wrapper (Continuum) provides MEV protection for Raydium CP-Swap pools by
 ## Program IDs
 
 ### Devnet
-- **CTM Wrapper Program**: `EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3`
+- **CTM Wrapper Program**: `7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE`
 - **Raydium CP-Swap Program**: `GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp`
 
 ## Installation
@@ -64,7 +64,7 @@ const wallet = Keypair.fromSecretKey(
 // Initialize client
 const client = new ContinuumClient(
   connection,
-  new PublicKey('EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3')
+  new PublicKey('7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE')
 );
 ```
 
@@ -146,7 +146,7 @@ solana-test-validator --reset
 2. **Deploy programs** (if testing locally):
 ```bash
 # Deploy CTM Wrapper
-anchor deploy --program-id EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3
+anchor deploy --program-id 7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE
 
 # Initialize CTM Wrapper
 npx ts-node scripts/initialize.ts
@@ -193,7 +193,7 @@ RPC_URL=https://api.devnet.solana.com
 WS_URL=wss://api.devnet.solana.com
 
 # Program IDs
-CONTINUUM_PROGRAM_ID=EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3
+CONTINUUM_PROGRAM_ID=7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE
 CP_SWAP_PROGRAM_ID=GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp
 
 # Wallet Configuration (for testing only - use secure key management in production)

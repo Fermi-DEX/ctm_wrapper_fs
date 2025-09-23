@@ -1,0 +1,5 @@
+Initialize
+
+npm run dev_init
+https://solscan.io/tx/2gAXgZg2XMdvRSNvwH22DRzp8AngeJNDhuCc9oVrGY36g3RrFqXgyhNzZFbYPWT97cA3aSQhzEoosZxn9Ei2Jf5s?cluster=devnet
+

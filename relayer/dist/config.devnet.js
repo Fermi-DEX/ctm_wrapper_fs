@@ -20,7 +20,7 @@ exports.config = {
     // Server
     port: parseInt(process.env.PORT || '8080', 10),
     // Programs
-    continuumProgramId: new web3_js_1.PublicKey('EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3'),
+    continuumProgramId: new web3_js_1.PublicKey('7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE'),
     cpSwapProgramId: new web3_js_1.PublicKey('GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp'),
     // Relayer wallet
     relayerKeypair: (() => {

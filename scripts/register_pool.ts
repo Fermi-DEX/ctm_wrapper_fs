@@ -9,7 +9,7 @@ import {
 } from '@solana/web3.js';
 import BN from 'bn.js';
 
-const CONTINUUM_PROGRAM_ID = new PublicKey('EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3');
+const CONTINUUM_PROGRAM_ID = new PublicKey('7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE');
 
 // Parse pool ID from command line
 const poolId = process.argv[2];

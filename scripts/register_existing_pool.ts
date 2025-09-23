@@ -9,7 +9,7 @@ import {
 } from '@solana/web3.js';
 import BN from 'bn.js';
 
-const CONTINUUM_PROGRAM_ID = new PublicKey('EmCthKmtC2B6xXKF9uYxo9EF5C5zJjbYvUMW3VrhFXX3');
+const CONTINUUM_PROGRAM_ID = new PublicKey('7HjAvgmHfeziumwrF15BkZNrgECEKGrBPJ2EfqeFxYQE');
 
 // Use the pool we created earlier
 const POOL_ID = new PublicKey('3cE6Bzs85Mayba6RPBaEVZgNGzLw4XT2DviYZnT1kj63');
