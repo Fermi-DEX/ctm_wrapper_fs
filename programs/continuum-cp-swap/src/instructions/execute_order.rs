@@ -22,7 +22,7 @@ pub struct ExecuteOrder<'info> {
         mut,
         seeds = [b"order", order_state.user.as_ref(), &expected_sequence.to_le_bytes()],
         bump,
-        constraint = order_state.sequence == expected_sequence @ ContinuumError::InvalidSequence,
+        constraint = order_state.sequence == expected_sequence + 1 @ ContinuumError::InvalidSequence,
         constraint = order_state.status == OrderStatus::Pending @ ContinuumError::InvalidOrderStatus,
     )]
     pub order_state: Account<'info, OrderState>,

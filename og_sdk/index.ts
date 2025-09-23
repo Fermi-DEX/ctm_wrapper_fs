@@ -188,7 +188,13 @@ export default class ContinuumCpSwapSDK {
     minAmountOut: BN,
     isBaseInput: boolean,
     poolId: PublicKey,
-    poolAuthorityBump: number
+    cpSwapProgram: PublicKey,
+    poolAuthorityBump: number,
+    cpDepositAccounts: {
+      pubkey: any;
+      isSigner: boolean;
+      isWritable: boolean;
+    }[]
   ): Promise<TransactionInstruction> => {
     return await this.program.methods
       .swapImmediate(
@@ -199,8 +205,9 @@ export default class ContinuumCpSwapSDK {
         poolAuthorityBump
       )
       .accounts({
-        cpSwapProgram: CP_SWAP_PROGRAM,
+        cpSwapProgram,
       })
+      .remainingAccounts(cpDepositAccounts)
       .instruction();
   };
 
@@ -209,13 +216,20 @@ export default class ContinuumCpSwapSDK {
     minAmount0: BN,
     minAmount1: BN,
     poolId: PublicKey,
-    poolAuthorityBump: number
+    cpSwapProgram: PublicKey,
+    poolAuthorityBump: number,
+    cpDepositAccounts: {
+      pubkey: any;
+      isSigner: boolean;
+      isWritable: boolean;
+    }[]
   ): Promise<TransactionInstruction> => {
     return await this.program.methods
       .withdrawLp(lpAmount, minAmount0, minAmount1, poolId, poolAuthorityBump)
       .accounts({
-        cpSwapProgram: CP_SWAP_PROGRAM,
+        cpSwapProgram,
       })
+      .remainingAccounts(cpDepositAccounts)
       .instruction();
   };
 

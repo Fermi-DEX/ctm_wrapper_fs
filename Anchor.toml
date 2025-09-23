@@ -12,7 +12,7 @@ raydium_cp_swap = "GkenxCtvEabZrwFf15D3E6LjoZTywH2afNwiqDwthyDp"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "http://109.94.98.81:8899"
+cluster = "devnet"
 wallet = "./id.json"
 
 [scripts]
